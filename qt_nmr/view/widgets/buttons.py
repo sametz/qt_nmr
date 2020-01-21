@@ -80,6 +80,23 @@ class ABC_ButtonGroup(QGroupBox):
         self.buttons['2'].setChecked(True)
 
 
+class DNMR_ButtonGroup(QGroupBox):
+    def __init__(self, *args, **kwargs):
+        super(DNMR_ButtonGroup, self).__init__(*args, **kwargs)
+        self.dnmr_twospin_button = QRadioButton('2-spin')
+        self.dnmr_twospin_button.setObjectName('dnmr_twospin_button')
+        self.dnmr_ab_button = QRadioButton('AB coupled')
+        self.dnmr_ab_button.setObjectName('dnmr_ab_button')
+
+        layout = QVBoxLayout()
+        self.buttongroup = QButtonGroup()
+        for button in [self.dnmr_twospin_button, self.dnmr_ab_button]:
+            layout.addWidget(button)
+            self.buttongroup.addButton(button)
+        self.setLayout(layout)
+        self.dnmr_twospin_button.setChecked(True)
+
+
 class myGui(QMainWindow):
 
     def __init__(self, *args, **kwargs):
@@ -98,6 +115,7 @@ class myGui(QMainWindow):
         windowALayout.addWidget(QLabel('Window A'))
         windowALayout.addWidget(CalcTypeButtonGroup('Calc Type'))
         windowALayout.addWidget(MultipletButtonGroup('Multiplet'))
+        windowALayout.addWidget(DNMR_ButtonGroup('DNMR'))
 
         windowB = QWidget()
         windowBLayout = QGridLayout()
