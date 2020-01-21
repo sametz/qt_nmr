@@ -33,6 +33,23 @@ class CalcTypeButtonGroup(QGroupBox):
         self.multiplet_button.setChecked(True)
 
 
+class ABC_ButtonGroup(QGroupBox):
+    def __init__(self, *args, **kwargs):
+        super(ABC_ButtonGroup, self).__init__(*args, **kwargs)
+        self.buttons = {}
+        self.layout = QVBoxLayout()
+        self.buttongroup = QButtonGroup()
+        for i in range(2, 9):  # 2 to 8 nuclei
+            button = QRadioButton(str(i))
+            self.buttons[str(i)] = button
+            button.setObjectName('nuclei_button' + str(i))
+            self.layout.addWidget(button)
+            self.buttongroup.addButton(button)
+        self.setLayout(self.layout)
+
+        self.buttons['2'].setChecked(True)
+
+
 class myGui(QMainWindow):
 
     def __init__(self, *args, **kwargs):
@@ -54,6 +71,7 @@ class myGui(QMainWindow):
         windowB = QWidget()
         windowBLayout = QGridLayout()
         windowBLayout.addWidget(QLabel('Window B'))
+        windowBLayout.addWidget(ABC_ButtonGroup('Number of Spins'))
 
         windowA.setLayout(windowALayout)
         windowB.setLayout(windowBLayout)

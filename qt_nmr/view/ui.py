@@ -3,7 +3,7 @@ from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtWidgets import (QMainWindow, QHBoxLayout, QLabel,
                                QDoubleSpinBox, QVBoxLayout, QWidget)
 
-from qt_nmr.view.widgets import CalcTypeButtonGroup
+from qt_nmr.view.widgets import CalcTypeButtonGroup, ABC_ButtonGroup
 
 class UiMainWindow:
     def setupUi(self, main_window):
@@ -26,11 +26,13 @@ class UiMainWindow:
         # self.calctype_layout.setObjectName('calctype_layout')
         self.calctype = CalcTypeButtonGroup('Calc Type')
         # following will eventually be a stacked widget eventually
-        self.multiplet_layout = QVBoxLayout()
-        self.multiplet_layout.setObjectName('multiplet_layout')
+        # self.multiplet_layout = QVBoxLayout()
+        # self.multiplet_layout.setObjectName('multiplet_layout')
         self.left_bar_layout.addWidget(self.calctype)
+        self.abc_menu = ABC_ButtonGroup('Number of Spins')
+        self.left_bar_layout.addWidget(self.abc_menu)
         # self.left_bar_layout.addLayout(self.calctype_layout)
-        self.left_bar_layout.addLayout(self.multiplet_layout)
+        # self.left_bar_layout.addLayout(self.multiplet_layout)
 
         # following will eventually be a stacked widget
         self.varbar_layout = QHBoxLayout()
@@ -55,7 +57,7 @@ class UiMainWindow:
         self.main_layout.addWidget(self.plot)
 
         # self.calctype_layout.addWidget(QLabel('Calc Type'))
-        self.multiplet_layout.addWidget(QLabel('Multiplet'))
+        # self.multiplet_layout.addWidget(QLabel('Multiplet'))
 
         self.varbar_layout.addWidget(QLabel('Toolbar widgets will go here'))
 
