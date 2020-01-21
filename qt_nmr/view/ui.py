@@ -3,7 +3,8 @@ from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtWidgets import (QMainWindow, QHBoxLayout, QLabel,
                                QDoubleSpinBox, QVBoxLayout, QWidget)
 
-from qt_nmr.view.widgets import CalcTypeButtonGroup, ABC_ButtonGroup
+from qt_nmr.view.widgets import (
+    CalcTypeButtonGroup, ABC_ButtonGroup, MultipletButtonGroup)
 
 class UiMainWindow:
     def setupUi(self, main_window):
@@ -29,7 +30,9 @@ class UiMainWindow:
         # self.multiplet_layout = QVBoxLayout()
         # self.multiplet_layout.setObjectName('multiplet_layout')
         self.left_bar_layout.addWidget(self.calctype)
+        self.multiplet_menu = MultipletButtonGroup('Multiplet')
         self.abc_menu = ABC_ButtonGroup('Number of Spins')
+        self.left_bar_layout.addWidget(self.multiplet_menu)
         self.left_bar_layout.addWidget(self.abc_menu)
         # self.left_bar_layout.addLayout(self.calctype_layout)
         # self.left_bar_layout.addLayout(self.multiplet_layout)
