@@ -2,6 +2,7 @@ from pyqtgraph import PlotWidget
 from PySide2.QtWidgets import (QHBoxLayout, QLabel,
                                QVBoxLayout, QWidget)
 
+from qt_nmr.view.widgets.toolbars import BaseToolbar
 from qt_nmr.view.widgets.buttons import (
     CalcTypeButtonGroup, ABC_ButtonGroup, MultipletButtonGroup,
     DNMR_ButtonGroup)
@@ -40,8 +41,8 @@ class UiMainWindow:
         # self.left_bar_layout.addLayout(self.multiplet_layout)
 
         # following will eventually be a stacked widget
-        self.varbar_layout = QHBoxLayout()
-        self.varbar_layout.setObjectName('varbar_layout')
+        # self.varbar_layout = QHBoxLayout()
+        # self.varbar_layout.setObjectName('varbar_layout')
 
         # self.base_label = QLabel('Base: ')
         # self.base_entry = QDoubleSpinBox()
@@ -58,12 +59,13 @@ class UiMainWindow:
         #     self.top_bar_layout.addWidget(widget)
         # self.central_layout.addLayout(self.top_bar_layout)
         self.plot = PlotWidget()
-        self.main_layout.addLayout(self.varbar_layout)
+        self.main_layout.addWidget(
+            BaseToolbar(main_window, main_window.view_state['multiplet']['AB']))
         self.main_layout.addWidget(self.plot)
 
         # self.calctype_layout.addWidget(QLabel('Calc Type'))
         # self.multiplet_layout.addWidget(QLabel('Multiplet'))
 
-        self.varbar_layout.addWidget(QLabel('Toolbar widgets will go here'))
+        # self.varbar_layout.addWidget(QLabel('Toolbar widgets will go here'))
 
         main_window.setCentralWidget(self.central_widget)
