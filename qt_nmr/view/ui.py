@@ -27,6 +27,7 @@ class UiMainWindow:
         # self.calctype_layout = QVBoxLayout()
         # self.calctype_layout.setObjectName('calctype_layout')
         self.calctype = CalcTypeButtonGroup('Calc Type')
+        self.calctype.setObjectName('calctype_menu')
         # following will eventually be a stacked widget eventually
         # self.multiplet_layout = QVBoxLayout()
         # self.multiplet_layout.setObjectName('multiplet_layout')

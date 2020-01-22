@@ -1,6 +1,7 @@
 import sys
 
-from PySide2.QtWidgets import QMainWindow
+from PySide2.QtCore import Slot as pyqtSlot
+from PySide2.QtWidgets import QMainWindow, QRadioButton, QButtonGroup
 
 from qt_nmr.view.settings import view_defaults
 from qt_nmr.view.ui import UiMainWindow
@@ -12,7 +13,51 @@ class MainWindow(QMainWindow):
         self.view_state = view_defaults
         self._ui = UiMainWindow()
         self._ui.setupUi(self)
+        self.connect_widgets()
 
+    def connect_widgets(self):
+        # multiplet_button = self.findChild(QRadioButton, 'multiplet_button')
+        # abc_button = self.findChild(QRadioButton, 'abc_button')
+        # dnmr_button = self.findChild(QRadioButton, 'dnmr_button')
+        #
+        # calctype_buttongroup = self.findChild(QButtonGroup, 'calctype_buttongroup')
+        # print('found buttongroup ', calctype_buttongroup)
+        self._ui.calctype.buttongroup.buttonClicked.connect(
+            self.select_calctype)
+        # self._ui.calctype.buttongroup.buttonClicked(abc_button).connect(
+        #     self.select_abc_menu)
+        # self._ui.calctype.buttongroup.buttonClicked(dnmr_button).connect(
+        #     self.select_dnmr_menu)
+        # calctype_buttongroup.buttonClicked(multiplet_button).connect(
+        #     self.select_multiplet_menu)
+        # calctype_buttongroup.buttonClicked(abc_button).connect(
+        #     self.select_abc_menu)
+        # calctype_buttongroup.buttonClicked(dnmr_button).connect(
+        #     self.select_dnmr_menu)
+
+    @pyqtSlot(QRadioButton)
+    def select_calctype(self, button):
+        print('select_calctype called')
+        name = button.objectName()
+        options = {'multiplet_button': self.select_multiplet_menu,
+                   'abc_button': self.select_abc_menu,
+                   'dnmr_button': self.select_dnmr_menu}
+        if not name in options:
+            print('ERROR button name mismatch')
+        else:
+            options[name]()
+
+    @pyqtSlot()
+    def select_multiplet_menu(self):
+        print('multiplet menu selected')
+
+    @pyqtSlot()
+    def select_abc_menu(self):
+        print('ABC... menu selected')
+
+    @pyqtSlot()
+    def select_dnmr_menu(self):
+        print('DNMR menu selected')
 
 if __name__ == '__main__':
     from PySide2.QtWidgets import QApplication

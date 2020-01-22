@@ -1,3 +1,4 @@
+from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtWidgets import (QGroupBox, QRadioButton, QVBoxLayout,
                                QMainWindow, QStackedWidget, QWidget,
                                QGridLayout, QToolBar, QLabel, QButtonGroup)
@@ -22,15 +23,19 @@ class CalcTypeButtonGroup(QGroupBox):
 
         layout = QVBoxLayout()
         self.buttongroup = QButtonGroup()
+        print('created ', self.buttongroup.objectName())
         for button in [self.multiplet_button, self.abc_button, self.dnmr_button]:
             layout.addWidget(button)
             self.buttongroup.addButton(button)
-        # layout.addWidget(self.multiplet_button)
-        # layout.addWidget(self.abc_button)
-        # layout.addWidget(self.dnmr_button)
         self.setLayout(layout)
 
         self.multiplet_button.setChecked(True)
+    #     self.buttongroup.buttonClicked.connect(self.on_change)
+    #
+    # @pyqtSlot()
+    # def on_change(self):
+    #     print(self.buttongroup.checkedButton().objectName(),
+    #           self.buttongroup.checkedId())
 
 
 class MultipletButtonGroup(QGroupBox):
