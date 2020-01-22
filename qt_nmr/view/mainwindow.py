@@ -68,7 +68,12 @@ class MainWindow(QMainWindow):
         name = button.objectName()
         button_bars = {
             'AB_button': 'multiplet_AB',
-            'AB2_button': 'multiplet_AB2'
+            'AB2_button': 'multiplet_AB2',
+            'ABX_button': 'multiplet_ABX',
+            'ABX3_button': 'multiplet_ABX3',
+            'AAXX_button': 'multiplet_AAXX',
+            '1stOrd_button': 'multiplet_1stOrd',  # not implemented yet
+            'AABB_button': 'multiplet_AABB'
         }
         print('toolbar dump ', self.toolbars)
         self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])
