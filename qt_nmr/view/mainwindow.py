@@ -11,6 +11,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.view_state = view_defaults
+        self.toolbars = {}
         self._ui = UiMainWindow()
         self._ui.setupUi(self)
         self.connect_widgets()
@@ -24,6 +25,9 @@ class MainWindow(QMainWindow):
         # print('found buttongroup ', calctype_buttongroup)
         self._ui.calctype.buttongroup.buttonClicked.connect(
             self.select_calctype)
+        self._ui.multiplet_menu.buttongroup.buttonClicked.connect(
+            self.select_toolbar)
+
         # self._ui.calctype.buttongroup.buttonClicked(abc_button).connect(
         #     self.select_abc_menu)
         # self._ui.calctype.buttongroup.buttonClicked(dnmr_button).connect(
@@ -47,17 +51,27 @@ class MainWindow(QMainWindow):
         else:
             options[name]()
 
-    @pyqtSlot()
     def select_multiplet_menu(self):
         print('multiplet menu selected')
+        self._ui.stack_model_selections.setCurrentWidget(self._ui.multiplet_menu)
 
-    @pyqtSlot()
     def select_abc_menu(self):
         print('ABC... menu selected')
+        self._ui.stack_model_selections.setCurrentWidget(self._ui.abc_menu)
 
-    @pyqtSlot()
     def select_dnmr_menu(self):
         print('DNMR menu selected')
+        self._ui.stack_model_selections.setCurrentWidget(self._ui.dnmr_menu)
+
+    @pyqtSlot(QRadioButton)
+    def select_toolbar(self, button):
+        name = button.objectName()
+        button_bars = {
+            'AB_button': 'multiplet_AB',
+            'AB2_button': 'multiplet_AB2'
+        }
+        print('toolbar dump ', self.toolbars)
+        self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])
 
 if __name__ == '__main__':
     from PySide2.QtWidgets import QApplication

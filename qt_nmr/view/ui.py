@@ -1,8 +1,8 @@
 from pyqtgraph import PlotWidget
-from PySide2.QtWidgets import (QHBoxLayout, QLabel,
+from PySide2.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
                                QVBoxLayout, QWidget)
 
-from qt_nmr.view.widgets.toolbars import BaseToolbar
+from qt_nmr.view.widgets.toolbars import toolbar_stack
 from qt_nmr.view.widgets.buttons import (
     CalcTypeButtonGroup, ABC_ButtonGroup, MultipletButtonGroup,
     DNMR_ButtonGroup)
@@ -24,20 +24,25 @@ class UiMainWindow:
         self.central_layout.addLayout(self.left_bar_layout)
         self.central_layout.addLayout(self.main_layout)
 
-        # self.calctype_layout = QVBoxLayout()
-        # self.calctype_layout.setObjectName('calctype_layout')
         self.calctype = CalcTypeButtonGroup('Calc Type')
         self.calctype.setObjectName('calctype_menu')
-        # following will eventually be a stacked widget eventually
-        # self.multiplet_layout = QVBoxLayout()
-        # self.multiplet_layout.setObjectName('multiplet_layout')
-        self.left_bar_layout.addWidget(self.calctype)
+        self.stack_model_selections = QStackedWidget()
+        self.stack_model_selections.setObjectName('model_selection_stack')
         self.multiplet_menu = MultipletButtonGroup('Multiplet')
+        self.multiplet_menu.setObjectName('multiplet_menu')
         self.abc_menu = ABC_ButtonGroup('Number of Spins')
+        self.abc_menu.setObjectName('abc_menu')
         self.dnmr_menu = DNMR_ButtonGroup('DNMR')
-        self.left_bar_layout.addWidget(self.multiplet_menu)
-        self.left_bar_layout.addWidget(self.abc_menu)
-        self.left_bar_layout.addWidget(self.dnmr_menu)
+        self.dnmr_menu.setObjectName('dnmr_menu')
+        for menu in [self.multiplet_menu, self.abc_menu, self.dnmr_menu]:
+            self.stack_model_selections.addWidget(menu)
+        self.stack_model_selections.setCurrentWidget(self.multiplet_menu)
+        self.left_bar_layout.addWidget(self.calctype)
+        self.left_bar_layout.addWidget(self.stack_model_selections)
+
+        # self.left_bar_layout.addWidget(self.multiplet_menu)
+        # self.left_bar_layout.addWidget(self.abc_menu)
+        # self.left_bar_layout.addWidget(self.dnmr_menu)
         # self.left_bar_layout.addLayout(self.calctype_layout)
         # self.left_bar_layout.addLayout(self.multiplet_layout)
 
@@ -59,9 +64,9 @@ class UiMainWindow:
         #                self.exp_label, self.exp_entry]:
         #     self.top_bar_layout.addWidget(widget)
         # self.central_layout.addLayout(self.top_bar_layout)
+        self.toolbars = toolbar_stack(main_window, main_window.view_state)
         self.plot = PlotWidget()
-        self.main_layout.addWidget(
-            BaseToolbar(main_window, main_window.view_state['multiplet']['AB']))
+        self.main_layout.addWidget(self.toolbars)
         self.main_layout.addWidget(self.plot)
 
         # self.calctype_layout.addWidget(QLabel('Calc Type'))

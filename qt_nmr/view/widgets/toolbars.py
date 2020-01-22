@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QHBoxLayout
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QStackedWidget
 from PySide2.QtCore import Signal as pyqtSignal
 
 from qt_nmr.view.widgets.entry import EntryWidget
@@ -17,24 +17,21 @@ class BaseToolbar(QWidget):
         widgets = [EntryWidget(key, val) for key, val in self.params.items()]
         for widget in widgets:
             self.layout().addWidget(widget)
-        for widget in widgets:
-            print(widget.parent())
 
     def reset(self, setting):
         pass
 
 
-class AB_Bar(BaseToolbar):
-    def __init__(self, ):
-        super().__init__()
-
-
-class TestClass(QWidget):
-    value_changed = pyqtSignal(tuple)
-
-
-class TestSubclass(TestClass):
-    pass
+def toolbar_stack(mainwindow, settings):
+    stack_toolbars = QStackedWidget()
+    stack_toolbars.setObjectName('toolbar_stack')
+    for model, params in settings['multiplet'].items():
+        toolbar = BaseToolbar(mainwindow, params)
+        toolbar.setObjectName(f'multiplet_{model}_toolbar')
+        stack_toolbars.addWidget(toolbar)
+        mainwindow.toolbars[f'multiplet_{model}'] = toolbar
+    stack_toolbars.setCurrentWidget(mainwindow.toolbars['multiplet_AB'])
+    return stack_toolbars
 
 
 if __name__ == '__main__':
