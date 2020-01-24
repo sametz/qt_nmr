@@ -78,6 +78,14 @@ class MainWindow(QMainWindow):
         print('toolbar dump ', self.toolbars)
         self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])
 
+    def update(self, calctype, model):
+        # print(f'old view state: {self.view_state}')
+        # self.view_state[calctype][model] = data[model]
+        # print(f'new view state: {self.view_state}')
+        print(f'data to send to controller: '
+              f'{model}, {self.view_state[calctype][model]}')
+
+
 if __name__ == '__main__':
     from PySide2.QtWidgets import QApplication
     app = QApplication(sys.argv)

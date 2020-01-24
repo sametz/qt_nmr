@@ -9,12 +9,14 @@ class BaseToolbar(QWidget):
         super(BaseToolbar, self).__init__(*args, **kwargs)
         self.mainwindow = mainwindow
         self.model = model
-        self.params = params
+        self.data = params
+        print(f'toolbar model {self.model} has params {self.data}')
+
         layout = QHBoxLayout()
         self.setLayout(layout)
         self._set_name()
-        self._set_data()
-        self._set_state()
+        # self._set_data()
+        # self._set_state()
         self._add_widgets()
 
     def _set_name(self):
@@ -23,8 +25,8 @@ class BaseToolbar(QWidget):
     def _set_data(self):
         pass
 
-    def _set_state(self):
-        pass
+    # def _set_state(self):
+    #     pass
 
     def _add_widgets(self):
         pass
@@ -36,21 +38,23 @@ class BaseToolbar(QWidget):
 class MultipletBar(BaseToolbar):
     def __init__(self, *args, **kwargs):
         super(MultipletBar, self).__init__(*args, **kwargs)
-        print(self.objectName())
-        print(self.data)
-        print(self.state)
+        # self.data = self.mainwindow.view_state['multiplet'][self.model]
+        print(f'{self.objectName()} has data {self.data}')
+        # print(self.state)
 
     def _set_name(self):
         self.setObjectName(f'multiplet_{self.model}_toolbar')
 
-    def _set_data(self):
-        self.data = {self.model: self.params}
+    # def _set_data(self):
+    #     # self.data = {self.model: self.params}
+    #     self.data = self.mainwindow.view_state['multiplet'][self.model]
+    #     print(f'toolbar multiplet-{self.model} has data {self.data}')
 
-    def _set_state(self):
-        self.state = {'multiplet': self.data}
+    # def _set_state(self):
+    #     self.state = {'multiplet': self.data}
 
     def _add_widgets(self):
-        widgets = [EntryWidget(key, val) for key, val in self.params.items()]
+        widgets = [EntryWidget(key, val) for key, val in self.data.items()]
         for widget in widgets:
             self.layout().addWidget(widget)
             widget.value_changed_signal.connect(self.on_value_changed)
@@ -58,15 +62,18 @@ class MultipletBar(BaseToolbar):
     @pyqtSlot(tuple)
     def on_value_changed(self, data):
         name, value = data
-        print(f'before change: {self.state}')
-        self.params[name] = value
-        self._set_data()
-        self._set_state()
-        print(f'after change: {self.state}')
+        print(f'change request: name {name}, value {value}')
+        print(f'before change: toolbar data {self.data}')
+        print(f'before change: mainwindow state {self.mainwindow.view_state}')
+        self.data[name] = value
+        # self._set_data()
+        # self._set_state()
+        print(f'after change: toolbar data {self.data}')
+        print(f'after change: mainwindow state {self.mainwindow.view_state}')
         self.request_update()
 
     def request_update(self):
-        pass
+        self.mainwindow.update('multiplet', self.model)
 
     @pyqtSlot(dict)
     def update(self):
