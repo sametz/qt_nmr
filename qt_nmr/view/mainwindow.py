@@ -8,8 +8,9 @@ from qt_nmr.view.ui import UiMainWindow
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, controller):
         super().__init__()
+        self.controller = controller
         self.view_state = view_defaults
         self.toolbars = {}
         self._ui = UiMainWindow()
@@ -84,6 +85,8 @@ class MainWindow(QMainWindow):
         # print(f'new view state: {self.view_state}')
         print(f'data to send to controller: '
               f'{model}, {self.view_state[calctype][model]}')
+        self.controller.update_model(calctype, model,
+                                     self.view_state[calctype][model])
 
 
 if __name__ == '__main__':
