@@ -1,4 +1,4 @@
-from pyqtgraph import PlotWidget
+from pyqtgraph import PlotWidget, setConfigOption
 from PySide2.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
                                QVBoxLayout, QWidget)
 
@@ -12,6 +12,10 @@ class UiMainWindow:
         main_window.setObjectName('main_window')
         main_window.setWindowTitle('qt_mvc Demo')
         main_window.resize(800, 600)
+
+        # pyqtgraph configuration
+        setConfigOption('background', 'w')
+        setConfigOption('foreground', 'k')
 
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName('centralwidget')

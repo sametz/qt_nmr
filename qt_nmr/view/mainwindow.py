@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
 
     def plot(self, x, y):
         self._ui.plot.clearPlots()
-        self._ui.plot.plot(x, y)
+        self._ui.plot.plot(x, y, pen='b')
 
     def _dump_calctype(self, calctype):
         """temp method for debugging."""
