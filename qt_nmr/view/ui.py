@@ -66,6 +66,7 @@ class UiMainWindow:
         # self.central_layout.addLayout(self.top_bar_layout)
         self.toolbars = toolbar_stack(main_window, main_window.view_state)
         self.plot = PlotWidget()
+        self.plot.getViewBox().invertX(True)  # Reverse x axis "NMR style"
         self.main_layout.addWidget(self.toolbars)
         self.main_layout.addWidget(self.plot)
 
