@@ -83,10 +83,21 @@ class MainWindow(QMainWindow):
         # print(f'old view state: {self.view_state}')
         # self.view_state[calctype][model] = data[model]
         # print(f'new view state: {self.view_state}')
+        print('multiplet contents: ')
+        self._dump_calctype(calctype)
         print(f'data to send to controller: '
               f'{model}, {self.view_state[calctype][model]}')
         self.controller.update_model(calctype, model,
                                      self.view_state[calctype][model])
+
+    def _dump_calctype(self, calctype):
+        """temp method for debugging."""
+        for model, params in self.view_state[calctype].items():
+            print(model)
+            print([key for key in params])
+            print([val for val in params.values()])
+
+
 
 
 if __name__ == '__main__':
