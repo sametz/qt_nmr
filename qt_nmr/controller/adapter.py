@@ -71,8 +71,23 @@ def parse_aabb(params):
 
 
 def parse_first_order(params):
-    pass
-
+    print(f'parse_first_order received {params}')
+    _Jax = params['JAX']
+    _a = params['#A']
+    _Jbx = params['JBX']
+    _b = params['#B']
+    _Jcx = params['JCX']
+    _c = params['#C']
+    _Jdx = params['JDX']
+    _d = params['#D']
+    _Vcentr = params['Vcentr']
+    singlet = (_Vcentr, 1)  # using default intensity of 1
+    allcouplings = [(_Jax, _a), (_Jbx, _b), (_Jcx, _c), (_Jdx, _d)]
+    couplings = [coupling for coupling in allcouplings if coupling[1] != 0]
+    data = {'signal': singlet,
+            'couplings': couplings}
+    # return data
+    return singlet, couplings
 
 def parse_second_order(params):
     pass
@@ -92,26 +107,27 @@ class Adapter:
 
 def view_to_model(model, params):
     adapters = {
-        'AB': parse_ab,
-        'AB2': parse_ab2,
+        'AB': parse_posargs,
+        'AB2': parse_posargs,
         'ABX': parse_abx,
-        'ABX3': parse_abx3,
-        'AAXX': parse_aaxx,
-        'AABB': parse_aabb,
-        'first_order': parse_first_order,
+        'ABX3': parse_posargs,
+        'AAXX': parse_posargs,
+        'AABB': parse_posargs,
+        '1stOrd': parse_first_order,
         'second_order': parse_second_order,
         'dnmr_two_singlets': parse_dnmr_two_singlets,
         'dnmr_ab': parse_dnmr_ab
     }
-    if model not in adapters:
-        print('No adapter for model_name found')
-        return None
-    if model == 'ABX':
-        print('ABX called')
-        return parse_abx(params)
-    else:
-        # return adapters[model_name](params)
-        return parse_posargs(params)
+    return adapters[model](params)
+    # if model not in adapters:
+    #     print('No adapter for model_name found')
+    #     return None
+    # if model == 'ABX':
+    #     print('ABX called')
+    #     return parse_abx(params)
+    # else:
+    #     # return adapters[model_name](params)
+    #     return parse_posargs(params)
 
 
 

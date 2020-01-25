@@ -2,6 +2,7 @@ import numpy as np
 from PySide2.QtCore import QObject
 from PySide2.QtCore import Signal as pyqtSignal
 from nmrsim.discrete import AB, AB2, ABX, ABX3, AAXX, AABB
+from nmrsim.firstorder import multiplet
 from nmrsim.plt import add_lorentzians
 
 
@@ -17,7 +18,8 @@ class Model(QObject):
             'ABX': ABX,
             'ABX3': ABX3,
             'AAXX': AAXX,
-            'AABB': AABB
+            'AABB': AABB,
+            '1stOrd': multiplet
         }
 
     def _linspace(self, min, max, margin=50, resolution=0.1):
@@ -37,6 +39,7 @@ class Model(QObject):
         print(f'model received {model_name} {args}')
         peaklist = self.functions[model_name](*args)
         # print (f'peaklist before sort: {peaklist}')
+        print(f'peaklist is {peaklist}')
         peaklist.sort()
         min_ = peaklist[0][0]
         max_ = peaklist[-1][0]

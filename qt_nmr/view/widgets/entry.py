@@ -1,6 +1,6 @@
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QDoubleSpinBox, QLabel
+from PySide2.QtWidgets import (QWidget, QVBoxLayout, QDoubleSpinBox, QLabel)
 
 
 class EntryWidget(QWidget):

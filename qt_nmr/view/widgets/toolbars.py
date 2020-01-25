@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QStackedWidget
+from PySide2.QtWidgets import QWidget, QHBoxLayout, QStackedWidget, QSpinBox
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
 from qt_nmr.view.widgets.entry import EntryWidget
@@ -38,20 +38,10 @@ class BaseToolbar(QWidget):
 class MultipletBar(BaseToolbar):
     def __init__(self, *args, **kwargs):
         super(MultipletBar, self).__init__(*args, **kwargs)
-        # self.data = self.mainwindow.view_state['multiplet'][self.model_name]
         print(f'{self.objectName()} has data {self.data}')
-        # print(self.state)
 
     def _set_name(self):
         self.setObjectName(f'multiplet_{self.model}_toolbar')
-
-    # def _set_data(self):
-    #     # self.data = {self.model_name: self.params}
-    #     self.data = self.mainwindow.view_state['multiplet'][self.model_name]
-    #     print(f'toolbar multiplet-{self.model_name} has data {self.data}')
-
-    # def _set_state(self):
-    #     self.state = {'multiplet': self.data}
 
     def _add_widgets(self):
         widgets = [EntryWidget(key, val) for key, val in self.data.items()]
@@ -79,11 +69,32 @@ class MultipletBar(BaseToolbar):
     def update(self):
         pass
 
+
+class FirstOrderBar(MultipletBar):
+    def __init__(self, *args, **kwargs):
+        super(FirstOrderBar, self).__init__(*args, **kwargs)
+
+    def _add_widgets(self):
+        widgets = []
+        for key, val in self.data.items():
+            if '#' in key:
+                widgets.append(EntryWidget(key, val, entry=QSpinBox))
+                assert widgets[-1].entry_type is int
+            else:
+                widgets.append(EntryWidget(key, val))
+                assert widgets[-1].entry_type is float
+        for widget in widgets:
+            self.layout().addWidget(widget)
+            widget.value_changed_signal.connect(self.on_value_changed)
+
 def toolbar_stack(mainwindow, settings):
     stack_toolbars = QStackedWidget()
     stack_toolbars.setObjectName('toolbar_stack')
     for model, params in settings['multiplet'].items():
-        toolbar = MultipletBar(mainwindow, model, params)
+        if model == '1stOrd':
+            toolbar = FirstOrderBar(mainwindow, model, params)
+        else:
+            toolbar = MultipletBar(mainwindow, model, params)
         # toolbar.setObjectName(f'multiplet_{model_name}_toolbar')
         stack_toolbars.addWidget(toolbar)
         mainwindow.toolbars[f'multiplet_{model}'] = toolbar

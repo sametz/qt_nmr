@@ -52,7 +52,7 @@ class MultipletButtonGroup(QGroupBox):
         self.AAXX_button = QRadioButton("AA'XX'")
         self.AAXX_button.setObjectName('AAXX_button')
         self.firstorder_button = QRadioButton('1stOrd')
-        self.firstorder_button.setObjectName('firstorder_button')
+        self.firstorder_button.setObjectName('1stOrd_button')
         self.AABB_button = QRadioButton("AA'BB'")
         self.AABB_button.setObjectName('AABB_button')
 

@@ -31,6 +31,18 @@ AABBdict = {"Vab": 40,
             "Jab_prime": 6.0,
             'Vcentr': 150}
 
+firstorder_dict = {
+    'JAX': 7.00,
+     '#A': 2,
+     'JBX': 3.00,
+     '#B': 1,
+     'JCX': 2.00,
+     '#C': 0,
+     'JDX': 7.00,
+     '#D': 0,
+     'Vcentr': 150.00
+}
+
 
 view_defaults = {
     'multiplet': {
@@ -39,6 +51,7 @@ view_defaults = {
         'ABX': ABXdict,
         'ABX3': ABX3dict,
         'AAXX': AAXXdict,
+        '1stOrd': firstorder_dict,
         'AABB': AABBdict
     },
     'nspin': {},
