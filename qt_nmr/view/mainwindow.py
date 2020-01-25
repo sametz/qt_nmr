@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
             self.select_calctype)
         self._ui.multiplet_menu.buttongroup.buttonClicked.connect(
             self.select_toolbar)
+        self._ui.toolbars.currentChanged.connect(self.on_toolbar_change)
 
         # self._ui.calctype.buttongroup.buttonClicked(abc_button).connect(
         #     self.select_abc_menu)
@@ -78,6 +79,11 @@ class MainWindow(QMainWindow):
         }
         print('toolbar dump ', self.toolbars)
         self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])
+
+    @pyqtSlot()
+    def on_toolbar_change(self):
+        current_toolbar = self._ui.toolbars.currentWidget()
+        current_toolbar.request_update()
 
     def update(self, calctype, model):
         # print(f'old view state: {self.view_state}')

@@ -29,7 +29,33 @@ def parse_ab2(params):
 
 
 def parse_abx(params):
-    pass
+    """Matches ABX behavior to WINDNMR behavior.
+
+    In WINDNMR, vx was hard coded to equal vb + 100.
+    """
+    print(f'params before abx conversion: {params}')
+    # new dict's order is important therefore converted item-wise
+    new_params = {
+        'Jab': params['Jab'],
+        # For ud_dnmr output to match WINDNMR output, Js must be transposed
+        'Jax': params['Jbx'],
+        'Jbx': params['Jax'],
+        'Vab': params['Vab'],
+        'Vcentr': params['Vcentr']
+        # # new parameter added: WINDNMR assumes vx is vb + 100
+        # 'vx': Vcentr + (Vab / 2) + 100
+    }
+    # params['Jax'], params['Jbx'] = params['Jbx'], params['Jax']
+    Vcentr = new_params['Vcentr']
+    Vab = new_params['Vab']
+    # Reich's ABX: vx initialized as vb + 100
+    new_params['vx'] = Vcentr + (Vab / 2) + 100
+    print(f'params after conversion: {new_params}')
+    return parse_posargs(new_params)
+
+
+# def parse_abx(params):
+#     pass
 
 
 def parse_abx3(params):
@@ -80,6 +106,9 @@ def view_to_model(model, params):
     if model not in adapters:
         print('No adapter for model_name found')
         return None
+    if model == 'ABX':
+        print('ABX called')
+        return parse_abx(params)
     else:
         # return adapters[model_name](params)
         return parse_posargs(params)

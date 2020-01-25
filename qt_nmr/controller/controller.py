@@ -12,6 +12,7 @@ class Controller(QObject):
 
         self._model = model
         self.view = MainWindow(self)
+        self.view.on_toolbar_change()  # trigger an initial plot
 
     def update_model(self, calctype, model_name, kwargs):
         print(f' controller received {calctype} {model_name} {kwargs}')
