@@ -26,7 +26,7 @@ class EntryWidget(QWidget):
     def on_entry_value_changed(self, value):
         # print('on_entry_value_changed')
         # print(f'name: {self.name}')
-        # mydict = self.parent().data[self.parent().model]
+        # mydict = self.parent().data[self.parent().model_name]
         # print(f'parent data: {self.parent().data}')
         # print(f'my dict: {mydict}')
         # assert self.name in mydict

@@ -2,6 +2,7 @@ import numpy as np
 from PySide2.QtCore import QObject
 from PySide2.QtCore import Signal as pyqtSignal
 from nmrsim.discrete import AB, AB2, ABX, ABX3, AAXX, AABB
+from nmrsim.plt import add_lorentzians
 
 
 class Model(QObject):
@@ -19,12 +20,34 @@ class Model(QObject):
             'AABB': AABB
         }
 
-    def update(self, calctype, model, kwargs):
-        # model, params = request.items()
-        # assert model not in self.data:
-        print(f'model received {calctype} {model} {kwargs}')
-        print(self.functions[model](*kwargs))
+    def _linspace(self, min, max, margin=50, resolution=0.1):
+        # stub for now
+        if min > max:
+            print(f'WARNING min {min} greater than max {max}')
+        lin_min, lin_max = min - margin, max + margin
+        window = lin_max - lin_min  #Hz
+        datapoints = round (window / resolution)
+        print(f'making linspace for {min} {max} {resolution}')
+        return np.linspace(lin_min, lin_max, datapoints)
 
+
+    def update(self, model_name, *args):
+        # model_name, params = request.items()
+        # assert model_name not in self.data:
+        print(f'model received {model_name} {args}')
+        peaklist = self.functions[model_name](*args)
+        # print (f'peaklist before sort: {peaklist}')
+        peaklist.sort()
+        min_ = peaklist[0][0]
+        max_ = peaklist[-1][0]
+        print(f'min, max {min_} {max_}')
+        # print(f'peaklist after sort: {peaklist}')
+        x = self._linspace(min_, max_)
+        y = add_lorentzians(x, peaklist, w=0.5)
+        print(x[:10])
+        print(y[:10])
+        print(max(y))
+        return x, y
 
     def _update_y(self):
         self._y = (self._x * self._base) ** self._exp

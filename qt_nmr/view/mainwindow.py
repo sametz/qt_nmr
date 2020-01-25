@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
 
     def update(self, calctype, model):
         # print(f'old view state: {self.view_state}')
-        # self.view_state[calctype][model] = data[model]
+        # self.view_state[calctype][model_name] = data[model_name]
         # print(f'new view state: {self.view_state}')
         print('multiplet contents: ')
         self._dump_calctype(calctype)
@@ -89,6 +89,10 @@ class MainWindow(QMainWindow):
               f'{model}, {self.view_state[calctype][model]}')
         self.controller.update_model(calctype, model,
                                      self.view_state[calctype][model])
+
+    def plot(self, x, y):
+        self._ui.plot.clearPlots()
+        self._ui.plot.plot(x, y)
 
     def _dump_calctype(self, calctype):
         """temp method for debugging."""

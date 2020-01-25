@@ -4,11 +4,11 @@ Model.
 
 def parse_posargs(params):
     """
-    Converts params to a list of numeric arguments for the model, IF the
+    Converts params to a list of numeric arguments for the model_name, IF the
     following conditions are met:
     * dicts are the new ordered-by-default
     * arguments are listed in settings.py dicts in same order as position of
-      arguments in the model's corresponding function
+      arguments in the model_name's corresponding function
 
     :param params: {str: float...}
         for {name of variable: value...}
@@ -24,7 +24,7 @@ def parse_ab(params):
 
 
 def parse_ab2(params):
-    # A separate function in case ab and ab2 parameters/model ever diverge
+    # A separate function in case ab and ab2 parameters/model_name ever diverge
     return parse_ab(params)
 
 
@@ -78,10 +78,10 @@ def view_to_model(model, params):
         'dnmr_ab': parse_dnmr_ab
     }
     if model not in adapters:
-        print('No adapter for model found')
+        print('No adapter for model_name found')
         return None
     else:
-        # return adapters[model](params)
+        # return adapters[model_name](params)
         return parse_posargs(params)
 
 

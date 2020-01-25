@@ -38,7 +38,7 @@ class BaseToolbar(QWidget):
 class MultipletBar(BaseToolbar):
     def __init__(self, *args, **kwargs):
         super(MultipletBar, self).__init__(*args, **kwargs)
-        # self.data = self.mainwindow.view_state['multiplet'][self.model]
+        # self.data = self.mainwindow.view_state['multiplet'][self.model_name]
         print(f'{self.objectName()} has data {self.data}')
         # print(self.state)
 
@@ -46,9 +46,9 @@ class MultipletBar(BaseToolbar):
         self.setObjectName(f'multiplet_{self.model}_toolbar')
 
     # def _set_data(self):
-    #     # self.data = {self.model: self.params}
-    #     self.data = self.mainwindow.view_state['multiplet'][self.model]
-    #     print(f'toolbar multiplet-{self.model} has data {self.data}')
+    #     # self.data = {self.model_name: self.params}
+    #     self.data = self.mainwindow.view_state['multiplet'][self.model_name]
+    #     print(f'toolbar multiplet-{self.model_name} has data {self.data}')
 
     # def _set_state(self):
     #     self.state = {'multiplet': self.data}
@@ -84,7 +84,7 @@ def toolbar_stack(mainwindow, settings):
     stack_toolbars.setObjectName('toolbar_stack')
     for model, params in settings['multiplet'].items():
         toolbar = MultipletBar(mainwindow, model, params)
-        # toolbar.setObjectName(f'multiplet_{model}_toolbar')
+        # toolbar.setObjectName(f'multiplet_{model_name}_toolbar')
         stack_toolbars.addWidget(toolbar)
         mainwindow.toolbars[f'multiplet_{model}'] = toolbar
     stack_toolbars.setCurrentWidget(mainwindow.toolbars['multiplet_AB'])
