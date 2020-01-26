@@ -18,7 +18,7 @@ class Controller(QObject):
         print(f' controller received {calctype} {model_name} {kwargs}')
         args = view_to_model(model_name, kwargs)
         print(f' controller will send to model {args}')
-        x, y = self._model.update(model_name, *args)
+        x, y = self._model.update(calctype, model_name, *args)
         self.view.plot(x, y)
 
 

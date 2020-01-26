@@ -106,8 +106,8 @@ class MainWindow(QMainWindow):
         # print(f'new view state: {self.view_state}')
         print('multiplet contents: ')
         self._dump_calctype(calctype)
-        print(f'data to send to controller: '
-              f'{model}, {self.view_state[calctype][model]}')
+        print(f'data to send to controller for {calctype} {model}: ')
+        print(f'{self.view_state[calctype][model]}')
         self.controller.update_model(calctype, model,
                                      self.view_state[calctype][model])
 

@@ -94,7 +94,9 @@ def parse_second_order(params):
 
 
 def parse_dnmr_two_singlets(params):
-    pass
+    param_copy = params.copy()
+    param_copy['%a'] = params['%a'] / 100
+    return [val for val in param_copy.values()]
 
 
 def parse_dnmr_ab(params):
@@ -116,7 +118,7 @@ def view_to_model(model, params):
         '1stOrd': parse_first_order,
         'second_order': parse_second_order,
         'dnmr_two_singlets': parse_dnmr_two_singlets,
-        'dnmr_ab': parse_dnmr_ab
+        'dnmr_ab': parse_posargs
     }
     return adapters[model](params)
     # if model not in adapters:

@@ -98,6 +98,9 @@ class DNMR_Bar(MultipletBar):
     def _set_name(self):
         self.setObjectName(f'{self.model}')
 
+    def request_update(self):
+        self.mainwindow.update('dnmr', self.model)
+
 
 def toolbar_stack(mainwindow, settings):
     stack_toolbars = QStackedWidget()

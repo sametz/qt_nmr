@@ -2,6 +2,7 @@ import numpy as np
 from PySide2.QtCore import QObject
 from PySide2.QtCore import Signal as pyqtSignal
 from nmrsim.discrete import AB, AB2, ABX, ABX3, AAXX, AABB
+from nmrsim.dnmr import dnmr_two_singlets, dnmr_AB
 from nmrsim.firstorder import multiplet
 from nmrsim.plt import add_lorentzians
 
@@ -19,7 +20,9 @@ class Model(QObject):
             'ABX3': ABX3,
             'AAXX': AAXX,
             'AABB': AABB,
-            '1stOrd': multiplet
+            '1stOrd': multiplet,
+            'dnmr_two_singlets': dnmr_two_singlets,
+            'dnmr_ab': dnmr_AB
         }
 
     def _linspace(self, min, max, margin=50, resolution=0.1):
@@ -33,10 +36,33 @@ class Model(QObject):
         return np.linspace(lin_min, lin_max, datapoints)
 
 
-    def update(self, model_name, *args):
-        # model_name, params = request.items()
-        # assert model_name not in self.data:
-        print(f'model received {model_name} {args}')
+    def update(self, calctype, model_name, *args):
+
+        if calctype == 'multiplet':
+            x, y = self.update_multiplet(model_name, *args)
+        elif calctype == 'dnmr':
+            x, y = self.functions[model_name](*args)
+        else:
+            print(f'calctype {calctype} not implemented')
+        # # model_name, params = request.items()
+        # # assert model_name not in self.data:
+        # print(f'model received {model_name} {args}')
+        # peaklist = self.functions[model_name](*args)
+        # # print (f'peaklist before sort: {peaklist}')
+        # print(f'peaklist is {peaklist}')
+        # peaklist.sort()
+        # min_ = peaklist[0][0]
+        # max_ = peaklist[-1][0]
+        # print(f'min, max {min_} {max_}')
+        # # print(f'peaklist after sort: {peaklist}')
+        # x = self._linspace(min_, max_)
+        # y = add_lorentzians(x, peaklist, w=0.5)
+        # print(x[:10])
+        # print(y[:10])
+        # print(max(y))
+        return x, y
+
+    def update_multiplet(self, model_name, *args):
         peaklist = self.functions[model_name](*args)
         # print (f'peaklist before sort: {peaklist}')
         print(f'peaklist is {peaklist}')
@@ -51,9 +77,6 @@ class Model(QObject):
         print(y[:10])
         print(max(y))
         return x, y
-
-    def _update_y(self):
-        self._y = (self._x * self._base) ** self._exp
 
     # @property
     # def x(self):
