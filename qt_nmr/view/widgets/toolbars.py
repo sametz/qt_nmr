@@ -96,12 +96,16 @@ class SecondOrderBar(BaseToolbar):
         self.n = len(self.v)
         print(self.n)
         assert self.n == int(self.model)
+        self._add_nspin_widgets()
     #     self.w_array = np.array([[0.5]])
     #
     def _set_name(self):
-        self.setObjectName('nuclei_bar' + self.model)
+        self.setObjectName('nuclei_bar' + str(self.model))
 
-    def _set_widgets(self):
+    def _add_widgets(self):
+        pass  # must initialize widgets after super init
+
+    def _add_nspin_widgets(self):
         self._add_frequency_widgets()
         self._add_peakwidth_widget()
         self._add_J_button()
@@ -114,13 +118,29 @@ class SecondOrderBar(BaseToolbar):
             widget = EntryWidget(name, value)
             # widgets.append(widget))
             self.layout().addWidget(widget)
-            widget.value_changed_signal.connect(self.on_value_changed)
+            widget.value_changed_signal.connect(self.on_v_changed)
 
     def _add_peakwidth_widget(self):
         pass
 
     def _add_J_button(self):
         pass
+
+    @pyqtSlot(tuple)
+    def on_v_changed(self, data):
+        name, value = data
+        print(f'{name} ends in {int(name)}')
+        # WARNING if n ever > 9 this will break
+        i = int(name[-1]) - 1
+        # print(f'change request: name {name}, value {value}')
+        # print(f'before change: toolbar data {self.data}')
+        # print(f'before change: mainwindow state {self.mainwindow.view_state}')
+        self.v[i] = value
+        # self._set_data()
+        # self._set_state()
+        print(f'after change: {self.v}')
+        print(f'after change: mainwindow state {self.mainwindow.view_state}')
+        self.request_update()
 
     def request_update(self):
         self.mainwindow.update('nspin', self.n)
@@ -220,8 +240,8 @@ def toolbar_stack(mainwindow, settings):
         mainwindow.toolbars[f'multiplet_{model}'] = toolbar
 
     for spins, params in settings['nspin'].items():
-        model = str(spins)  # need str so BaseToolbar name inits
-        toolbar = SecondOrderBar(mainwindow, model, params)
+        # model = str(spins)  # need str so BaseToolbar name inits
+        toolbar = SecondOrderBar(mainwindow, spins, params)
         stack_toolbars.addWidget(toolbar)
         mainwindow.toolbars[toolbar.objectName()] = toolbar
 

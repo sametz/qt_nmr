@@ -83,6 +83,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QRadioButton)
     def select_toolbar(self, button):
         name = button.objectName()
+        print(f'current model button is {name}')
         button_bars = {
             'AB_button': 'multiplet_AB',
             'AB2_button': 'multiplet_AB2',
@@ -102,7 +103,10 @@ class MainWindow(QMainWindow):
             'dnmr_ab_button': 'dnmr_ab'
         }
         print('toolbar dump ', self.toolbars)
+        print(f'button {name} corresponds to toolbar {button_bars[name]}')
+        print(f'which is {self.toolbars[button_bars[name]]}')
         self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])
+        print(f'the active bar is now {self._ui.toolbars.currentWidget()}')
 
     @pyqtSlot()
     def on_toolbar_change(self):
