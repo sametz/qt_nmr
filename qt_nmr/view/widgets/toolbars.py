@@ -1,8 +1,10 @@
 from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
-                               QPushButton)
+                               QPushButton, QDialog, QGridLayout, QLabel,
+                               QVBoxLayout)
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
-from qt_nmr.view.widgets.entry import EntryWidget
+from PySide2.QtGui import QColor, QPalette
+from qt_nmr.view.widgets.entry import EntryWidget, J_EntryWidget, Color
 
 
 class BaseToolbar(QWidget):
@@ -98,6 +100,7 @@ class SecondOrderBar(BaseToolbar):
         print(self.n)
         assert self.n == int(self.model)
         self._add_nspin_widgets()
+        self._add_popup()
     #     self.w_array = np.array([[0.5]])
     #
     def _set_name(self):
@@ -129,9 +132,15 @@ class SecondOrderBar(BaseToolbar):
         self.layout().addWidget(j_button)
         j_button.clicked.connect(self.on_jbutton_clicked)
 
+    def _add_popup(self):
+        print(f'creating a popup for {self.n}')
+        self.popup = J_Popup(self)
+
+
     @pyqtSlot()
     def on_jbutton_clicked(self):
         print('j button clicked')
+        self.popup.show()
 
     @pyqtSlot(tuple)
     def on_v_changed(self, data):
@@ -219,6 +228,96 @@ class SecondOrderBar(BaseToolbar):
     #     self.controller.update_view_plot('nspin', **kwargs)
 
 
+class J_Popup(QDialog):
+
+    def __init__(self, caller, parent=None):
+        super(J_Popup, self).__init__(parent)
+        self.setObjectName('j_popup' + str(caller.n))
+        self.setWindowTitle('Spin ' + str(caller.n))
+        self.setAutoFillBackground(True)
+        palette = self.palette()
+        palette.setColor(QPalette.Window, QColor('darkGray'))
+        self.setPalette(palette)
+        layout = QGridLayout()
+        print(f'J_Popup construction with {caller.n, caller.v}')
+        # Set dialog layout
+        layout.addWidget(self.grey())
+        for col in range(1, caller.n + 1):
+            label = QLabel(f'V{col}')
+            labelbox = self.add_background(label)
+            layout.addWidget(labelbox, 0, col)
+        for row in range(1, caller.n + 1):
+            entry = EntryWidget(f'V{row}', caller.v[row - 1])
+            entrybox = self.add_background(entry)
+            layout.addWidget(entrybox, row, 0)
+            for col in range(1, caller.n + 1):
+                if col < row:
+                    j_entry = J_EntryWidget(name=f'J{col}{row}',
+                                            value=caller.j[col - 1, row - 1],
+                                            coords=(col - 1, row - 1),
+                                            j_matrix=caller.j
+                                            )
+                                 # controller=self.request_plot)
+                    j_entrybox = self.add_background(j_entry)
+                    layout.addWidget(j_entrybox)
+                else:
+                    layout.addWidget(self.grey())
+                # else:
+                #     Label(datagrid, bg='grey').grid(
+                #         row=row, column=col, sticky=NSEW, padx=1, pady=1)
+        self.setLayout(layout)
+
+    def grey(self):
+        return Color('lightGray')
+
+    def add_background(self, widget, color='lightGray'):
+        backing = Color(color)
+        layout = QVBoxLayout()
+        layout.addWidget(widget)
+        backing.setLayout(layout)
+        return backing
+        # def vj_popup(self, n):
+    #     """
+    #     Creates a new Toplevel window that provides entries for both
+    #     frequencies and J couplings, and updates self.v and self.j when
+    #     entries change.
+    #     :param n: number of spins
+    #     """
+    #     tl = Toplevel()
+    #     Label(tl, text='Second-Order Simulation').pack(side=TOP)
+    #     datagrid = Frame(tl)
+    #
+    #     # For gridlines, background set to the line color (e.g. 'black')
+    #     datagrid.config(background='black')
+    #
+    #     Label(datagrid, bg='gray90').grid(row=0, column=0, sticky=NSEW,
+    #                                       padx=1, pady=1)
+    #     for col in range(1, n + 1):
+    #         Label(datagrid, text='V%d' % col, width=8, height=3,
+    #               bg='gray90').grid(
+    #             row=0, column=col, sticky=NSEW, padx=1, pady=1)
+    #
+    #     for row in range(1, n + 1):
+    #         vtext = "V" + str(row)
+    #         v = ArrayBox(datagrid, array=self.v,
+    #                      coord=(0, row - 1),  # V1 stored in v[0, 0], etc.
+    #                      name=vtext, color='gray90',
+    #                      controller=self.request_plot)
+    #         v.grid(row=row, column=0, sticky=NSEW, padx=1, pady=1)
+    #         for col in range(1, n + 1):
+    #             if col < row:
+    #                 j = ArrayBox(datagrid, array=self.j,
+    #                              # J12 stored in j[0, 1] (and j[1, 0]) etc
+    #                              coord=(col - 1, row - 1),
+    #                              name="J%d%d" % (col, row),
+    #                              controller=self.request_plot)
+    #                 j.grid(row=row, column=col, sticky=NSEW, padx=1, pady=1)
+    #             else:
+    #                 Label(datagrid, bg='grey').grid(
+    #                     row=row, column=col, sticky=NSEW, padx=1, pady=1)
+    #
+    #     datagrid.pack()
+
 class DNMR_Bar(MultipletBar):
     def __int__(self, *args, **kwargs):
         """Currently DNMR_Bar is similar enough to MultipletBar that it can
@@ -258,6 +357,8 @@ def toolbar_stack(mainwindow, settings):
         mainwindow.toolbars[toolbar.objectName()] = toolbar
     stack_toolbars.setCurrentWidget(mainwindow.toolbars['multiplet_AB'])
     return stack_toolbars
+
+
 
 
 if __name__ == '__main__':
