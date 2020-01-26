@@ -11,6 +11,7 @@ class EntryWidget(QWidget):
         # self.value_changed_signal = pyqtSignal(tuple)
         super(EntryWidget, self).__init__(*args, **kwargs)
         self.name = name
+        self.value = value
         layout = layout()
         self.entry = entry()
         self.entry_type = type(value)
@@ -39,11 +40,27 @@ class EntryWidget(QWidget):
         self.value_changed_signal.emit((self.name, value))
 
 
+class V_EntryWidget(EntryWidget):
+    def __init__(self, index, v_array, *args, **kwargs):
+        super(V_EntryWidget, self).__init__(*args, **kwargs)
+        self.index = index
+        self.v_array = v_array
+
+    @pyqtSlot()
+    def on_entry_value_changed(self, value):
+        print(f'about to emit {self.index, self.entry.value()}')
+        self.value_changed_signal.emit((self.index, self.entry.value()))
+
+
 class J_EntryWidget(EntryWidget):
     def __init__(self, coords, j_matrix, *args, **kwargs):
         super(J_EntryWidget, self).__init__(*args, **kwargs)
         self.j_matrix = j_matrix
         self.coords = coords
+
+    @pyqtSlot()
+    def on_entry_value_changed(self, value):
+        self.value_changed_signal.emit((self.coords, self.entry.value()))
 
 
 class Color(QWidget):

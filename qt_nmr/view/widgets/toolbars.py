@@ -4,7 +4,8 @@ from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtGui import QColor, QPalette
-from qt_nmr.view.widgets.entry import EntryWidget, J_EntryWidget, Color
+from qt_nmr.view.widgets.entry import (EntryWidget, V_EntryWidget,
+                                       J_EntryWidget, Color)
 
 
 class BaseToolbar(QWidget):
@@ -115,14 +116,18 @@ class SecondOrderBar(BaseToolbar):
         self._add_J_button()
 
     def _add_frequency_widgets(self):
-        # widgets = []
+        self.v_widgets = []
         for i in range(self.n):
             name = 'V' + str(i + 1)
             value = self.v[i]
-            widget = EntryWidget(name, value)
+            widget = V_EntryWidget(name=name,
+                                   value=value,
+                                   index = i,
+                                   v_array = self.v)  # TODO remove redundancy
             # widgets.append(widget))
+            widget.value_changed_signal.connect(self.on_v_toolbar_change)
             self.layout().addWidget(widget)
-            widget.value_changed_signal.connect(self.on_v_changed)
+            self.v_widgets.append(widget)
 
     def _add_peakwidth_widget(self):
         pass
@@ -143,23 +148,49 @@ class SecondOrderBar(BaseToolbar):
         self.popup.show()
 
     @pyqtSlot(tuple)
-    def on_v_changed(self, data):
-        name, value = data
-        print(f'{name} ends in {int(name[-1])}')
-        # WARNING if n ever > 9 this will break
-        i = int(name[-1]) - 1
-        # print(f'change request: name {name}, value {value}')
-        # print(f'before change: toolbar data {self.data}')
-        # print(f'before change: mainwindow state {self.mainwindow.view_state}')
-        self.v[i] = value
-        # self._set_data()
-        # self._set_state()
-        print(f'after change: {self.v}')
-        print(f'after change: mainwindow state {self.mainwindow.view_state}')
+    def on_v_toolbar_change(self, data):
+        index, value = data
+        print(f'on_v_toolbar_change received {index, value}')
+        self.v[index] = value  # TODO: remove redundancy with on_v_popup_change
+        print(f'self.v is now {self.v}')
+        self.popup.reset()  # TODO: make sure popup v update doesn't trigger
+                            # multiple calls
+        self.request_update()
+
+    @pyqtSlot(tuple)
+    def on_v_popup_change(self, data):
+        index, value = data
+        print(f'index {index} {type(index)}')
+        print(f'value {value} {type(value)}')
+        # self.v[index] = value
+        toolbar_widget = self.v_widgets[index]
+        toolbar_widget.entry.setValue(value)
+        # self.request_update()
+
+        # i = int(name[-1]) - 1
+        # # print(f'change request: name {name}, value {value}')
+        # # print(f'before change: toolbar data {self.data}')
+        # # print(f'before change: mainwindow state {self.mainwindow.view_state}')
+        # self.v[i] = value
+        # # self._set_data()
+        # # self._set_state()
+        # print(f'after change: {self.v}')
+        # print(f'after change: mainwindow state {self.mainwindow.view_state}')
+        # self.request_update()
+
+    @pyqtSlot(tuple)
+    def on_j_change(self, data):
         self.request_update()
 
     def request_update(self):
         self.mainwindow.update('nspin', self.n)
+
+    def reset(self):
+        for i, widget in enumerate(self.v_widgets):
+            self.v[i] = widget.value()
+        self.request_update()
+
+
     # def add_frequency_widgets(self, n):
     #     for freq in range(n):
     #         vbox = ArrayBox(self, array=self.v, coord=(0, freq),
@@ -232,6 +263,7 @@ class J_Popup(QDialog):
 
     def __init__(self, caller, parent=None):
         super(J_Popup, self).__init__(parent)
+        self.caller = caller
         self.setObjectName('j_popup' + str(caller.n))
         self.setWindowTitle('Spin ' + str(caller.n))
         self.setAutoFillBackground(True)
@@ -242,21 +274,34 @@ class J_Popup(QDialog):
         print(f'J_Popup construction with {caller.n, caller.v}')
         # Set dialog layout
         layout.addWidget(self.grey())
+        self.v_widgets = []
+        self.j_widgets = {}
         for col in range(1, caller.n + 1):
             label = QLabel(f'V{col}')
             labelbox = self.add_background(label)
             layout.addWidget(labelbox, 0, col)
         for row in range(1, caller.n + 1):
-            entry = EntryWidget(f'V{row}', caller.v[row - 1])
+            entry = V_EntryWidget(name=f'V{row}',
+                                  value=caller.v[row - 1],
+                                  index = row - 1,
+                                  v_array = caller.v  # TODO remove redundancy
+                                  )
+            self.v_widgets.append(entry)
+
+                                  # v_array caller.v[row - 1])
+            entry.value_changed_signal.connect(caller.on_v_popup_change)
             entrybox = self.add_background(entry)
             layout.addWidget(entrybox, row, 0)
             for col in range(1, caller.n + 1):
+                self.j_widgets[col - 1] = {}
                 if col < row:
                     j_entry = J_EntryWidget(name=f'J{col}{row}',
                                             value=caller.j[col - 1, row - 1],
                                             coords=(col - 1, row - 1),
                                             j_matrix=caller.j
                                             )
+                    self.j_widgets[col - 1][row - 1] = j_entry
+                    j_entry.value_changed_signal.connect(caller.on_j_change)
                                  # controller=self.request_plot)
                     j_entrybox = self.add_background(j_entry)
                     layout.addWidget(j_entrybox)
@@ -266,6 +311,19 @@ class J_Popup(QDialog):
                 #     Label(datagrid, bg='grey').grid(
                 #         row=row, column=col, sticky=NSEW, padx=1, pady=1)
         self.setLayout(layout)
+
+    def reset(self):
+        for i, widget in enumerate(self.v_widgets):
+            widget.entry.setValue(self.caller.v[i])
+        for i in range(0, self.caller.n):
+            for j in range(1, self.caller.n - 1):
+                if i < j:
+                    print(f'i {i} j {j}')
+                    print(f'matrix {self.j_widgets}')
+                    print(f'found j_widgets[i][j]')
+                    self.j_widgets[i][j].entry.setValue(self.caller.j[i, j])
+
+
 
     def grey(self):
         return Color('lightGray')
