@@ -120,6 +120,7 @@ def view_to_model(model, params):
         'dnmr_two_singlets': parse_dnmr_two_singlets,
         'dnmr_ab': parse_posargs
     }
+    print(f'adapter received {model} {params}')
     return adapters[model](params)
     # if model not in adapters:
     #     print('No adapter for model_name found')

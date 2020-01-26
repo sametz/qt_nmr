@@ -88,6 +88,110 @@ class FirstOrderBar(MultipletBar):
             widget.value_changed_signal.connect(self.on_value_changed)
 
 
+class SecondOrderBar(BaseToolbar):
+    def __init__(self, *args, **kwargs):
+        super(SecondOrderBar, self).__init__(*args, **kwargs)
+        self.v, self.j = self.data
+        print(self.v, self.j)
+        self.n = len(self.v)
+        print(self.n)
+        assert self.n == int(self.model)
+    #     self.w_array = np.array([[0.5]])
+    #
+    def _set_name(self):
+        self.setObjectName('nuclei_bar' + self.model)
+
+    def _set_widgets(self):
+        self._add_frequency_widgets()
+        self._add_peakwidth_widget()
+        self._add_J_button()
+
+    def _add_frequency_widgets(self):
+        # widgets = []
+        for i in range(self.n):
+            name = 'V' + str(i + 1)
+            value = self.v[i]
+            widget = EntryWidget(name, value)
+            # widgets.append(widget))
+            self.layout().addWidget(widget)
+            widget.value_changed_signal.connect(self.on_value_changed)
+
+    def _add_peakwidth_widget(self):
+        pass
+
+    def _add_J_button(self):
+        pass
+
+    def request_update(self):
+        self.mainwindow.update('nspin', self.n)
+    # def add_frequency_widgets(self, n):
+    #     for freq in range(n):
+    #         vbox = ArrayBox(self, array=self.v, coord=(0, freq),
+    #                         name='V' + str(freq + 1),
+    #                         controller=self.request_plot)
+    #         vbox.pack(side=LEFT)
+    #
+    # def add_peakwidth_widget(self):
+    #     wbox = ArrayBox(self, array=self.w_array, coord=(0, 0), name="W",
+    #                     controller=self.request_plot)
+    #     wbox.pack(side=LEFT)
+    #
+    # def add_J_button(self, n):
+    #     vj_button = Button(self, text="Enter Js",
+    #                        command=lambda: self.vj_popup(n))
+    #     vj_button.pack(side=LEFT, expand=N, fill=NONE)
+    #
+    # def vj_popup(self, n):
+    #     """
+    #     Creates a new Toplevel window that provides entries for both
+    #     frequencies and J couplings, and updates self.v and self.j when
+    #     entries change.
+    #     :param n: number of spins
+    #     """
+    #     tl = Toplevel()
+    #     Label(tl, text='Second-Order Simulation').pack(side=TOP)
+    #     datagrid = Frame(tl)
+    #
+    #     # For gridlines, background set to the line color (e.g. 'black')
+    #     datagrid.config(background='black')
+    #
+    #     Label(datagrid, bg='gray90').grid(row=0, column=0, sticky=NSEW,
+    #                                       padx=1, pady=1)
+    #     for col in range(1, n + 1):
+    #         Label(datagrid, text='V%d' % col, width=8, height=3,
+    #               bg='gray90').grid(
+    #             row=0, column=col, sticky=NSEW, padx=1, pady=1)
+    #
+    #     for row in range(1, n + 1):
+    #         vtext = "V" + str(row)
+    #         v = ArrayBox(datagrid, array=self.v,
+    #                      coord=(0, row - 1),  # V1 stored in v[0, 0], etc.
+    #                      name=vtext, color='gray90',
+    #                      controller=self.request_plot)
+    #         v.grid(row=row, column=0, sticky=NSEW, padx=1, pady=1)
+    #         for col in range(1, n + 1):
+    #             if col < row:
+    #                 j = ArrayBox(datagrid, array=self.j,
+    #                              # J12 stored in j[0, 1] (and j[1, 0]) etc
+    #                              coord=(col - 1, row - 1),
+    #                              name="J%d%d" % (col, row),
+    #                              controller=self.request_plot)
+    #                 j.grid(row=row, column=col, sticky=NSEW, padx=1, pady=1)
+    #             else:
+    #                 Label(datagrid, bg='grey').grid(
+    #                     row=row, column=col, sticky=NSEW, padx=1, pady=1)
+    #
+    #     datagrid.pack()
+    #
+    # def request_plot(self):
+    #     """Adapt 2D array data to kwargs of correct type for the controller."""
+    #     kwargs = {'v': self.v[0, :],  # controller takes 1D array of freqs
+    #               'j': self.j,
+    #               'w': self.w_array[0, 0]}  # controller takes float for w
+    #
+    #     self.controller.update_view_plot('nspin', **kwargs)
+
+
 class DNMR_Bar(MultipletBar):
     def __int__(self, *args, **kwargs):
         """Currently DNMR_Bar is similar enough to MultipletBar that it can
@@ -105,6 +209,7 @@ class DNMR_Bar(MultipletBar):
 def toolbar_stack(mainwindow, settings):
     stack_toolbars = QStackedWidget()
     stack_toolbars.setObjectName('toolbar_stack')
+
     for model, params in settings['multiplet'].items():
         if model == '1stOrd':
             toolbar = FirstOrderBar(mainwindow, model, params)
@@ -113,6 +218,13 @@ def toolbar_stack(mainwindow, settings):
         # toolbar.setObjectName(f'multiplet_{model_name}_toolbar')
         stack_toolbars.addWidget(toolbar)
         mainwindow.toolbars[f'multiplet_{model}'] = toolbar
+
+    for spins, params in settings['nspin'].items():
+        model = str(spins)  # need str so BaseToolbar name inits
+        toolbar = SecondOrderBar(mainwindow, model, params)
+        stack_toolbars.addWidget(toolbar)
+        mainwindow.toolbars[toolbar.objectName()] = toolbar
+
     for model, params in settings['dnmr'].items():
         toolbar = DNMR_Bar(mainwindow, model, params)
         stack_toolbars.addWidget(toolbar)

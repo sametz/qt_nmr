@@ -17,6 +17,7 @@ class UiMainWindow:
         setConfigOption('background', 'w')
         setConfigOption('foreground', 'k')
 
+        # Divide window into left (toolbar) and right(main) vertical layouts
         self.central_widget = QWidget(main_window)
         self.central_widget.setObjectName('centralwidget')
         self.central_layout = QHBoxLayout(self.central_widget)
@@ -28,6 +29,7 @@ class UiMainWindow:
         self.central_layout.addLayout(self.left_bar_layout)
         self.central_layout.addLayout(self.main_layout)
 
+        # Populate left toolbar
         self.calctype = CalcTypeButtonGroup('Calc Type')
         self.calctype.setObjectName('calctype_menu')
         self.stack_model_selections = QStackedWidget()
@@ -44,39 +46,11 @@ class UiMainWindow:
         self.left_bar_layout.addWidget(self.calctype)
         self.left_bar_layout.addWidget(self.stack_model_selections)
 
-        # self.left_bar_layout.addWidget(self.multiplet_menu)
-        # self.left_bar_layout.addWidget(self.abc_menu)
-        # self.left_bar_layout.addWidget(self.dnmr_menu)
-        # self.left_bar_layout.addLayout(self.calctype_layout)
-        # self.left_bar_layout.addLayout(self.multiplet_layout)
-
-        # following will eventually be a stacked widget
-        # self.varbar_layout = QHBoxLayout()
-        # self.varbar_layout.setObjectName('varbar_layout')
-
-        # self.base_label = QLabel('Base: ')
-        # self.base_entry = QDoubleSpinBox()
-        # self.base_entry.setObjectName('base_entry')
-        # self.exp_label = QLabel('Exponent: ')
-        # self.exp_entry = QDoubleSpinBox()
-        # self.exp_entry.setObjectName('exp_entry')
-        # self.base_entry.setValue(1)
-        # self.base_entry.setMinimum(0.1)
-        # self.exp_entry = QDoubleSpinBox()
-        # self.exp_entry.setValue(2)
-        # for widget in [self.base_label, self.base_entry,
-        #                self.exp_label, self.exp_entry]:
-        #     self.top_bar_layout.addWidget(widget)
-        # self.central_layout.addLayout(self.top_bar_layout)
+        # Add toolbars and plot area to main layout
         self.toolbars = toolbar_stack(main_window, main_window.view_state)
         self.plot = PlotWidget()
         self.plot.getViewBox().invertX(True)  # Reverse x axis "NMR style"
         self.main_layout.addWidget(self.toolbars)
         self.main_layout.addWidget(self.plot)
-
-        # self.calctype_layout.addWidget(QLabel('Calc Type'))
-        # self.multiplet_layout.addWidget(QLabel('Multiplet'))
-
-        # self.varbar_layout.addWidget(QLabel('Toolbar widgets will go here'))
 
         main_window.setCentralWidget(self.central_widget)

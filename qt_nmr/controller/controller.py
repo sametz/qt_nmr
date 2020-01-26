@@ -14,11 +14,15 @@ class Controller(QObject):
         self.view = MainWindow(self)
         self.view.on_toolbar_change()  # trigger an initial plot
 
-    def update_model(self, calctype, model_name, kwargs):
-        print(f' controller received {calctype} {model_name} {kwargs}')
-        args = view_to_model(model_name, kwargs)
+    def update_model(self, calctype, model_name, params):
+        print(f' controller received {calctype} {model_name} {params}')
+        if calctype == 'nspin':
+            args = params  # no conversion required
+        else:
+            args = view_to_model(model_name, params)
         print(f' controller will send to model {args}')
         x, y = self._model.update(calctype, model_name, *args)
+        print(f'sending to plot {x[:10], y[:10]}')
         self.view.plot(x, y)
 
 

@@ -29,6 +29,8 @@ class MainWindow(QMainWindow):
             self.select_calctype)
         self._ui.multiplet_menu.buttongroup.buttonClicked.connect(
             self.select_toolbar)
+        self._ui.abc_menu.buttongroup.buttonClicked.connect(
+            self.select_toolbar)
         self._ui.dnmr_menu.buttongroup.buttonClicked.connect(
             self.select_toolbar)
         self._ui.stack_model_selections.currentChanged.connect(
@@ -89,6 +91,13 @@ class MainWindow(QMainWindow):
             'AAXX_button': 'multiplet_AAXX',
             '1stOrd_button': 'multiplet_1stOrd',
             'AABB_button': 'multiplet_AABB',
+            'nuclei_button2': 'nuclei_bar2',
+            'nuclei_button3': 'nuclei_bar3',
+            'nuclei_button4': 'nuclei_bar4',
+            'nuclei_button5': 'nuclei_bar5',
+            'nuclei_button6': 'nuclei_bar6',
+            'nuclei_button7': 'nuclei_bar7',
+            'nuclei_button8': 'nuclei_bar8',
             'dnmr_twospin_button': 'dnmr_two_singlets',
             'dnmr_ab_button': 'dnmr_ab'
         }
@@ -104,23 +113,27 @@ class MainWindow(QMainWindow):
         # print(f'old view state: {self.view_state}')
         # self.view_state[calctype][model_name] = data[model_name]
         # print(f'new view state: {self.view_state}')
-        print('multiplet contents: ')
-        self._dump_calctype(calctype)
+        # print('multiplet contents: ')
+        # self._dump_calctype(calctype)
         print(f'data to send to controller for {calctype} {model}: ')
         print(f'{self.view_state[calctype][model]}')
+        if calctype == 'nspin':
+            print(f'view update will send:')
+            print(self.view_state[calctype][model])
         self.controller.update_model(calctype, model,
                                      self.view_state[calctype][model])
 
     def plot(self, x, y):
         self._ui.plot.clearPlots()
+        print(f'mainwindow plot received {x[:10], y[:10]}')
         self._ui.plot.plot(x, y, pen='b')
 
-    def _dump_calctype(self, calctype):
-        """temp method for debugging."""
-        for model, params in self.view_state[calctype].items():
-            print(model)
-            print([key for key in params])
-            print([val for val in params.values()])
+    # def _dump_calctype(self, calctype):
+    #     """temp method for debugging."""
+    #     for model, params in self.view_state[calctype].items():
+    #         print(model)
+    #         print([key for key in params])
+    #         print([val for val in params.values()])
 
 
 
