@@ -1,4 +1,5 @@
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QStackedWidget, QSpinBox
+from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
+                               QPushButton)
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
 from qt_nmr.view.widgets.entry import EntryWidget
@@ -124,12 +125,18 @@ class SecondOrderBar(BaseToolbar):
         pass
 
     def _add_J_button(self):
-        pass
+        j_button = QPushButton('Enter Js')
+        self.layout().addWidget(j_button)
+        j_button.clicked.connect(self.on_jbutton_clicked)
+
+    @pyqtSlot()
+    def on_jbutton_clicked(self):
+        print('j button clicked')
 
     @pyqtSlot(tuple)
     def on_v_changed(self, data):
         name, value = data
-        print(f'{name} ends in {int(name)}')
+        print(f'{name} ends in {int(name[-1])}')
         # WARNING if n ever > 9 this will break
         i = int(name[-1]) - 1
         # print(f'change request: name {name}, value {value}')
