@@ -1,7 +1,7 @@
 import sys
 
 from PySide2.QtCore import Slot as pyqtSlot
-from PySide2.QtWidgets import QMainWindow, QRadioButton, QButtonGroup
+from PySide2.QtWidgets import QMainWindow, QRadioButton, QButtonGroup, QWidget
 
 from qt_nmr.view.settings import view_defaults
 from qt_nmr.view.ui import UiMainWindow
@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
         self._ui = UiMainWindow()
         self._ui.setupUi(self)
         self.connect_widgets()
+        print(f'after mainwindow init, toolbars = {self.toolbars}')
 
     def connect_widgets(self):
         # multiplet_button = self.findChild(QRadioButton, 'multiplet_button')
@@ -28,8 +29,20 @@ class MainWindow(QMainWindow):
             self.select_calctype)
         self._ui.multiplet_menu.buttongroup.buttonClicked.connect(
             self.select_toolbar)
+        self._ui.dnmr_menu.buttongroup.buttonClicked.connect(
+            self.select_toolbar)
+        self._ui.stack_model_selections.currentChanged.connect(
+            self.refresh_toolbar
+            # self.select_toolbar(self._ui.stack_model_selections.b)
+        )
         self._ui.toolbars.currentChanged.connect(self.on_toolbar_change)
 
+    @pyqtSlot()
+    def refresh_toolbar(self):
+        print(f'refresh_toolbar called')
+        current_modelframe = self._ui.stack_model_selections.currentWidget()
+        current_modelbutton = current_modelframe.buttongroup.checkedButton()
+        self.select_toolbar(current_modelbutton)
         # self._ui.calctype.buttongroup.buttonClicked(abc_button).connect(
         #     self.select_abc_menu)
         # self._ui.calctype.buttongroup.buttonClicked(dnmr_button).connect(
@@ -74,8 +87,10 @@ class MainWindow(QMainWindow):
             'ABX_button': 'multiplet_ABX',
             'ABX3_button': 'multiplet_ABX3',
             'AAXX_button': 'multiplet_AAXX',
-            '1stOrd_button': 'multiplet_1stOrd',  # not implemented yet
-            'AABB_button': 'multiplet_AABB'
+            '1stOrd_button': 'multiplet_1stOrd',
+            'AABB_button': 'multiplet_AABB',
+            'dnmr_twospin_button': 'dnmr_two_singlets',
+            'dnmr_ab_button': 'dnmr_ab'
         }
         print('toolbar dump ', self.toolbars)
         self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])

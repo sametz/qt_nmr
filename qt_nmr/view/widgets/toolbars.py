@@ -87,6 +87,18 @@ class FirstOrderBar(MultipletBar):
             self.layout().addWidget(widget)
             widget.value_changed_signal.connect(self.on_value_changed)
 
+
+class DNMR_Bar(MultipletBar):
+    def __int__(self, *args, **kwargs):
+        """Currently DNMR_Bar is similar enough to MultipletBar that it can
+        be a subclass.
+        """
+        super(MultipletBar, self).__init__(*args, **kwargs)
+
+    def _set_name(self):
+        self.setObjectName(f'{self.model}')
+
+
 def toolbar_stack(mainwindow, settings):
     stack_toolbars = QStackedWidget()
     stack_toolbars.setObjectName('toolbar_stack')
@@ -98,6 +110,10 @@ def toolbar_stack(mainwindow, settings):
         # toolbar.setObjectName(f'multiplet_{model_name}_toolbar')
         stack_toolbars.addWidget(toolbar)
         mainwindow.toolbars[f'multiplet_{model}'] = toolbar
+    for model, params in settings['dnmr'].items():
+        toolbar = DNMR_Bar(mainwindow, model, params)
+        stack_toolbars.addWidget(toolbar)
+        mainwindow.toolbars[toolbar.objectName()] = toolbar
     stack_toolbars.setCurrentWidget(mainwindow.toolbars['multiplet_AB'])
     return stack_toolbars
 
