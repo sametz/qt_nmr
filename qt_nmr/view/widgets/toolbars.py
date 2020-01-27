@@ -297,7 +297,8 @@ class J_Popup(QDialog):
             entry.value_changed_signal.connect(caller.on_v_popup_change)
             entrybox = self.add_background(entry)
             layout.addWidget(entrybox, row, 0)
-            for col in range(1, caller.n + 1):
+        for row in range(2, caller.n + 1):
+            for col in range(1, caller.n):
                 self.j_widgets[col - 1] = {}
                 if col < row:
                     j_entry = J_EntryWidget(name=f'J{col}{row}',
@@ -320,8 +321,8 @@ class J_Popup(QDialog):
     def reset(self):
         for i, widget in enumerate(self.v_widgets):
             widget.entry.setValue(self.caller.v[i])
-        for i in range(0, self.caller.n):
-            for j in range(1, self.caller.n - 1):
+        for i in range(2, self.caller.n + 1):
+            for j in range(1, self.caller.n):
                 if i < j:
                     print(f'i {i} j {j}')
                     print(f'matrix {self.j_widgets}')
