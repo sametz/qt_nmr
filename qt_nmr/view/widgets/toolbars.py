@@ -180,6 +180,11 @@ class SecondOrderBar(BaseToolbar):
 
     @pyqtSlot(tuple)
     def on_j_change(self, data):
+        coords, value = data
+        i, j = coords
+        print('j {coord} changed to {value}')
+        self.j[i, j] = value
+        self.j[j, i] = value
         self.request_update()
 
     def request_update(self):
@@ -322,8 +327,6 @@ class J_Popup(QDialog):
                     print(f'matrix {self.j_widgets}')
                     print(f'found j_widgets[i][j]')
                     self.j_widgets[i][j].entry.setValue(self.caller.j[i, j])
-
-
 
     def grey(self):
         return Color('lightGray')
