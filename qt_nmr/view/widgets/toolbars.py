@@ -297,9 +297,11 @@ class J_Popup(QDialog):
             entry.value_changed_signal.connect(caller.on_v_popup_change)
             entrybox = self.add_background(entry)
             layout.addWidget(entrybox, row, 0)
-        for row in range(2, caller.n + 1):
-            for col in range(1, caller.n):
-                self.j_widgets[col - 1] = {}
+        for col in range(1, caller.n + 1):
+            self.j_widgets[col - 1] = {}
+            for row in range(1, caller.n + 1):
+            # for col in range(1, caller.n):
+            #     self.j_widgets[col - 1] = {}
                 if col < row:
                     j_entry = J_EntryWidget(name=f'J{col}{row}',
                                             value=caller.j[col - 1, row - 1],
@@ -310,18 +312,20 @@ class J_Popup(QDialog):
                     j_entry.value_changed_signal.connect(caller.on_j_change)
                                  # controller=self.request_plot)
                     j_entrybox = self.add_background(j_entry)
-                    layout.addWidget(j_entrybox)
+                    layout.addWidget(j_entrybox, row, col)
                 else:
-                    layout.addWidget(self.grey())
+                    layout.addWidget(self.grey(), row, col)
                 # else:
                 #     Label(datagrid, bg='grey').grid(
                 #         row=row, column=col, sticky=NSEW, padx=1, pady=1)
         self.setLayout(layout)
 
     def reset(self):
+        print(f'j dump for spin {self.caller.n}:')
+        print(f'{self.j_widgets}')
         for i, widget in enumerate(self.v_widgets):
             widget.entry.setValue(self.caller.v[i])
-        for i in range(2, self.caller.n + 1):
+        for i in range(0, self.caller.n):
             for j in range(1, self.caller.n):
                 if i < j:
                     print(f'i {i} j {j}')
