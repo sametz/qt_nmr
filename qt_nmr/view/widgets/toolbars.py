@@ -9,6 +9,9 @@ from qt_nmr.view.widgets.entry import (EntryWidget, V_EntryWidget,
                                        J_EntryWidget, Color)
 
 
+MAXIMUM = QSizePolicy.Maximum
+
+
 class BaseToolbar(QWidget):
     def __init__(self, mainwindow, model, params, *args, **kwargs):
         super(BaseToolbar, self).__init__(*args, **kwargs)
@@ -51,8 +54,9 @@ class MultipletBar(BaseToolbar):
     def _add_widgets(self):
         widgets = [EntryWidget(key, val) for key, val in self.data.items()]
         for widget in widgets:
-            self.layout().addWidget(widget)
+            self.layout().addWidget(widget, 0)
             widget.value_changed_signal.connect(self.on_value_changed)
+        self.layout().addWidget(QWidget(), 1)
 
     @pyqtSlot(tuple)
     def on_value_changed(self, data):
@@ -115,6 +119,7 @@ class SecondOrderBar(BaseToolbar):
         self._add_frequency_widgets()
         self._add_peakwidth_widget()
         self._add_J_button()
+        self.layout().addWidget(QWidget(), 1)  # spacer
 
     def _add_frequency_widgets(self):
         self.v_widgets = []
@@ -127,7 +132,7 @@ class SecondOrderBar(BaseToolbar):
                                    v_array = self.v)  # TODO remove redundancy
             # widgets.append(widget))
             widget.value_changed_signal.connect(self.on_v_toolbar_change)
-            self.layout().addWidget(widget)
+            self.layout().addWidget(widget, 0)
             self.v_widgets.append(widget)
 
     def _add_peakwidth_widget(self):
@@ -135,7 +140,8 @@ class SecondOrderBar(BaseToolbar):
 
     def _add_J_button(self):
         j_button = QPushButton('Enter Js')
-        self.layout().addWidget(j_button)
+        self.layout().addWidget(j_button, 0)
+        j_button.setSizePolicy(MAXIMUM, MAXIMUM)
         j_button.clicked.connect(self.on_jbutton_clicked)
 
     def _add_popup(self):

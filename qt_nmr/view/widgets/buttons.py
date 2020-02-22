@@ -1,7 +1,13 @@
 from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtWidgets import (QGroupBox, QRadioButton, QVBoxLayout,
                                QMainWindow, QStackedWidget, QWidget,
-                               QGridLayout, QToolBar, QLabel, QButtonGroup)
+                               QGridLayout, QToolBar, QLabel, QButtonGroup,
+                               QSizePolicy)
+
+
+# MAXIMUM = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+FIXED = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+
 
 class CalcTypeButtonGroup(QGroupBox):
     """
@@ -64,7 +70,7 @@ class MultipletButtonGroup(QGroupBox):
             layout.addWidget(button)
             self.buttongroup.addButton(button)
         self.setLayout(layout)
-
+        self.setSizePolicy(FIXED)
         self.AB_button.setChecked(True)
 
 

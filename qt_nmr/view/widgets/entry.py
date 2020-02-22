@@ -2,8 +2,11 @@ from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPalette
-from PySide2.QtWidgets import (QWidget, QVBoxLayout, QDoubleSpinBox, QLabel)
+from PySide2.QtWidgets import (QWidget, QVBoxLayout, QDoubleSpinBox, QLabel,
+                               QSizePolicy)
 
+
+MAXIMUM = QSizePolicy.Maximum
 
 class EntryWidget(QWidget):
     value_changed_signal = pyqtSignal(tuple)
@@ -28,6 +31,7 @@ class EntryWidget(QWidget):
         self.setLayout(layout)
         self.layout().setContentsMargins(0,0,0,0)
         self.layout().setSpacing(0)
+        self.setSizePolicy(MAXIMUM, MAXIMUM)
 
         self.entry.valueChanged.connect(self.on_entry_value_changed)
         # print('entry parent is: ', self.entry.parent(), self.entry.parentWidget())
