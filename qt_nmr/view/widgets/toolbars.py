@@ -1,8 +1,9 @@
 from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
                                QPushButton, QDialog, QGridLayout, QLabel,
-                               QVBoxLayout)
+                               QVBoxLayout, QSizePolicy)
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPalette
 from qt_nmr.view.widgets.entry import (EntryWidget, V_EntryWidget,
                                        J_EntryWidget, Color)
@@ -276,13 +277,17 @@ class J_Popup(QDialog):
         palette.setColor(QPalette.Window, QColor('darkGray'))
         self.setPalette(palette)
         layout = QGridLayout()
+        self.setLayout(layout)
+        self.layout().setSpacing(3)
         print(f'J_Popup construction with {caller.n, caller.v}')
         # Set dialog layout
         layout.addWidget(self.grey())
         self.v_widgets = []
         self.j_widgets = {}
-        for col in range(1, caller.n + 1):
+        fixed = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        for col in range(1, caller.n):
             label = QLabel(f'V{col}')
+            label.setAlignment(Qt.AlignHCenter)
             labelbox = self.add_background(label)
             layout.addWidget(labelbox, 0, col)
         for row in range(1, caller.n + 1):
@@ -291,11 +296,13 @@ class J_Popup(QDialog):
                                   index = row - 1,
                                   v_array = caller.v  # TODO remove redundancy
                                   )
+            entry.setSizePolicy(fixed)
             self.v_widgets.append(entry)
 
                                   # v_array caller.v[row - 1])
             entry.value_changed_signal.connect(caller.on_v_popup_change)
             entrybox = self.add_background(entry)
+            entrybox.setSizePolicy(fixed)
             layout.addWidget(entrybox, row, 0)
         for col in range(1, caller.n + 1):
             self.j_widgets[col - 1] = {}
@@ -311,14 +318,17 @@ class J_Popup(QDialog):
                     self.j_widgets[col - 1][row - 1] = j_entry
                     j_entry.value_changed_signal.connect(caller.on_j_change)
                                  # controller=self.request_plot)
+                    j_entry.setSizePolicy(fixed)
                     j_entrybox = self.add_background(j_entry)
+                    j_entrybox.setSizePolicy(fixed)
                     layout.addWidget(j_entrybox, row, col)
                 else:
                     layout.addWidget(self.grey(), row, col)
                 # else:
                 #     Label(datagrid, bg='grey').grid(
                 #         row=row, column=col, sticky=NSEW, padx=1, pady=1)
-        self.setLayout(layout)
+        # self.setLayout(layout)
+        # layout.setColumnMinimumWidth(caller.n + 1, layout.columnMinimumWidth(0))
 
     def reset(self):
         print(f'j dump for spin {self.caller.n}:')

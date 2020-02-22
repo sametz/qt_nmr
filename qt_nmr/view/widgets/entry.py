@@ -1,5 +1,6 @@
 from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
+from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPalette
 from PySide2.QtWidgets import (QWidget, QVBoxLayout, QDoubleSpinBox, QLabel)
 
@@ -19,10 +20,14 @@ class EntryWidget(QWidget):
             self.entry.setMinimum(-10000.0)
             self.entry.setMaximum(10000.0)
         # self.signal = pyqtSignal(dict)
-        layout.addWidget(QLabel(name))
+        label = QLabel(name)
+        label.setAlignment(Qt.AlignHCenter)
+        layout.addWidget(label)
         layout.addWidget(self.entry)
         self.entry.setValue(value)
         self.setLayout(layout)
+        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setSpacing(0)
 
         self.entry.valueChanged.connect(self.on_entry_value_changed)
         # print('entry parent is: ', self.entry.parent(), self.entry.parentWidget())
