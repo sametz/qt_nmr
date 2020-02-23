@@ -81,12 +81,3 @@ class Color(QWidget):
         palette = self.palette()
         palette.setColor(QPalette.Window, QColor(color))
         self.setPalette(palette)
-
-
-if __name__ == '__main__':
-    import sys
-    from PySide2.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    window = EntryWidget('Test', 1.1)
-    window.show()
-    sys.exit(app.exec_())

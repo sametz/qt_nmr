@@ -12,6 +12,7 @@ MINIMUM = QSizePolicy.Minimum
 MAXIMUM = QSizePolicy.Maximum
 
 
+# TODO: use an Abstract Base Class
 class BaseToolbar(QWidget):
     def __init__(self, mainwindow, model, params, *args, **kwargs):
         super(BaseToolbar, self).__init__(*args, **kwargs)

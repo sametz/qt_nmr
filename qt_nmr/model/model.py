@@ -29,8 +29,8 @@ class Model(QObject):
         peaklist.sort()
         min_ = peaklist[0][0]
         max_ = peaklist[-1][0]
-        if min_ > max_:
-            print(f'WARNING min {min_} greater than max {max_}')
+        # if min_ > max_:
+        #     print(f'WARNING min {min_} greater than max {max_}')
         lin_min, lin_max = min_ - margin, max_ + margin
         window = lin_max - lin_min  # Hz
         datapoints = round(window / resolution)

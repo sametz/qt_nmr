@@ -107,65 +107,65 @@ class DNMR_ButtonGroup(QGroupBox):
         self.dnmr_twospin_button.setChecked(True)
 
 
-class myGui(QMainWindow):
-
-    def __init__(self, *args, **kwargs):
-
-        super(myGui, self).__init__(*args, **kwargs)
-        self.setupCentral()
-        self.setupButtonToolBar()
-
-    def setupCentral(self):
-
-        self.stackedWidget = QStackedWidget()
-        self.setCentralWidget(self.stackedWidget)
-
-        windowA = QWidget()
-        windowALayout = QGridLayout()
-        windowALayout.addWidget(QLabel('Window A'))
-        windowALayout.addWidget(CalcTypeButtonGroup('Calc Type'))
-        windowALayout.addWidget(MultipletButtonGroup('Multiplet'))
-        windowALayout.addWidget(DNMR_ButtonGroup('DNMR'))
-
-        windowB = QWidget()
-        windowBLayout = QGridLayout()
-        windowBLayout.addWidget(QLabel('Window B'))
-        windowBLayout.addWidget(ABC_ButtonGroup('Number of Spins'))
-
-        windowA.setLayout(windowALayout)
-        windowB.setLayout(windowBLayout)
-
-        self.stackedWidget.addWidget(windowA)
-        self.stackedWidget.addWidget(windowB)
-        self.stackedWidget.setCurrentIndex(0)
-
-    def setupButtonToolBar(self):
-
-        buttonBar = QToolBar()
-        buttonBar.addWidget(self.modelButtonGroup())
-        self.addToolBar(buttonBar)
-
-    def modelButtonGroup(self):
-
-        modelsWidget = QWidget()
-        modelsLayout = QVBoxLayout()
-        self.ButtonGroup = QButtonGroup()
-
-        windowA_Button = QRadioButton('Window A')
-        windowA_Button.setChecked(True)
-        self.ButtonGroup.addButton(windowA_Button, 0)
-
-        windowB_Button = QRadioButton('Window B')
-        self.ButtonGroup.addButton(windowB_Button, 1)
-
-        self.ButtonGroup.buttonClicked[int].connect(self.switchdisplay)
-
-        modelsLayout.addWidget(windowA_Button)
-        modelsLayout.addWidget(windowB_Button)
-        modelsWidget.setLayout(modelsLayout)
-
-        return modelsWidget
-
-    def switchdisplay(self, id):
-        print('button %d has been pressed' % id)
-        self.stackedWidget.setCurrentIndex(id)
+# class myGui(QMainWindow):
+#
+#     def __init__(self, *args, **kwargs):
+#
+#         super(myGui, self).__init__(*args, **kwargs)
+#         self.setupCentral()
+#         self.setupButtonToolBar()
+#
+#     def setupCentral(self):
+#
+#         self.stackedWidget = QStackedWidget()
+#         self.setCentralWidget(self.stackedWidget)
+#
+#         windowA = QWidget()
+#         windowALayout = QGridLayout()
+#         windowALayout.addWidget(QLabel('Window A'))
+#         windowALayout.addWidget(CalcTypeButtonGroup('Calc Type'))
+#         windowALayout.addWidget(MultipletButtonGroup('Multiplet'))
+#         windowALayout.addWidget(DNMR_ButtonGroup('DNMR'))
+#
+#         windowB = QWidget()
+#         windowBLayout = QGridLayout()
+#         windowBLayout.addWidget(QLabel('Window B'))
+#         windowBLayout.addWidget(ABC_ButtonGroup('Number of Spins'))
+#
+#         windowA.setLayout(windowALayout)
+#         windowB.setLayout(windowBLayout)
+#
+#         self.stackedWidget.addWidget(windowA)
+#         self.stackedWidget.addWidget(windowB)
+#         self.stackedWidget.setCurrentIndex(0)
+#
+#     def setupButtonToolBar(self):
+#
+#         buttonBar = QToolBar()
+#         buttonBar.addWidget(self.modelButtonGroup())
+#         self.addToolBar(buttonBar)
+#
+#     def modelButtonGroup(self):
+#
+#         modelsWidget = QWidget()
+#         modelsLayout = QVBoxLayout()
+#         self.ButtonGroup = QButtonGroup()
+#
+#         windowA_Button = QRadioButton('Window A')
+#         windowA_Button.setChecked(True)
+#         self.ButtonGroup.addButton(windowA_Button, 0)
+#
+#         windowB_Button = QRadioButton('Window B')
+#         self.ButtonGroup.addButton(windowB_Button, 1)
+#
+#         self.ButtonGroup.buttonClicked[int].connect(self.switchdisplay)
+#
+#         modelsLayout.addWidget(windowA_Button)
+#         modelsLayout.addWidget(windowB_Button)
+#         modelsWidget.setLayout(modelsLayout)
+#
+#         return modelsWidget
+#
+#     def switchdisplay(self, id):
+#         print('button %d has been pressed' % id)
+#         self.stackedWidget.setCurrentIndex(id)

@@ -24,10 +24,10 @@ class Controller(QObject):
         print(f'sending to plot {x[:10], y[:10]}')
         self.view.plot(x, y)
 
-    @pyqtSlot(float)
-    def change_base(self, value):
-        self._model.base = value
-
-    @pyqtSlot(float)
-    def change_exp(self, value):
-        self._model.exp = value
+    # @pyqtSlot(float)
+    # def change_base(self, value):
+    #     self._model.base = value
+    #
+    # @pyqtSlot(float)
+    # def change_exp(self, value):
+    #     self._model.exp = value
