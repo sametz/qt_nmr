@@ -1,7 +1,5 @@
 from PySide2.QtWidgets import (QGroupBox, QRadioButton, QVBoxLayout,
-                               QMainWindow, QStackedWidget, QWidget,
-                               QGridLayout, QToolBar, QLabel, QButtonGroup,
-                               QSizePolicy)
+                               QButtonGroup, QSizePolicy)
 
 
 # MAXIMUM = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)

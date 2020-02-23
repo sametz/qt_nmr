@@ -9,7 +9,7 @@ class MainWindow(QMainWindow):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
-        self.view_state = view_defaults
+        self.view_state = view_defaults  # may want to copy defaults instead?
         self.toolbars = {}
         self._ui = UiMainWindow()
         self._ui.setupUi(self)
@@ -107,3 +107,7 @@ class MainWindow(QMainWindow):
         self._ui.plot.clearPlots()
         print(f'mainwindow plot received {x[:10], y[:10]}')
         self._ui.plot.plot(x, y, pen='b')
+        dataitem = self._ui.plot.listDataItems()
+        print('data item: ', dataitem[0].getData())
+        # print('plotted xy: ', self._ui.plot.getData())
+        # print('plotted y: ', self._ui.plot.yData)

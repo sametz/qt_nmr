@@ -1,5 +1,4 @@
 from PySide2.QtCore import QObject
-from PySide2.QtCore import Slot as pyqtSlot
 
 from qt_nmr.controller.adapter import view_to_model
 from qt_nmr.view.mainwindow import MainWindow
@@ -23,11 +22,3 @@ class Controller(QObject):
         x, y = self._model.update(calctype, model_name, *args)
         print(f'sending to plot {x[:10], y[:10]}')
         self.view.plot(x, y)
-
-    # @pyqtSlot(float)
-    # def change_base(self, value):
-    #     self._model.base = value
-    #
-    # @pyqtSlot(float)
-    # def change_exp(self, value):
-    #     self._model.exp = value

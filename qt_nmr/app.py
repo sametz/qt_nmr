@@ -7,6 +7,7 @@ from qt_nmr.controller.controller import Controller
 from qt_nmr.model.model import Model
 
 
+# noinspection PyArgumentList
 class App(QApplication):
     def __init__(self, sys_argv):
         super(App, self).__init__(sys_argv)
