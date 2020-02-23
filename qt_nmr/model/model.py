@@ -52,6 +52,7 @@ class Model(QObject):
             x, y = self.functions[model_name](*args)
         else:
             print(f'calctype {calctype} not implemented')
+            return(calctype)
         return x, y
 
     def update_multiplet(self, model_name, *args):
