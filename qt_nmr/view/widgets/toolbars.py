@@ -1,7 +1,6 @@
 from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
                                QPushButton, QDialog, QGridLayout, QLabel,
                                QVBoxLayout, QSizePolicy)
-from PySide2.QtCore import Signal as pyqtSignal
 from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QColor, QPalette
@@ -73,7 +72,7 @@ class MultipletBar(BaseToolbar):
         self.request_update()
 
     def request_update(self):
-        self.mainwindow.update('multiplet', self.model)
+        self.mainwindow.request_update('multiplet', self.model)
 
     @pyqtSlot(dict)
     def update(self):
@@ -108,8 +107,7 @@ class SecondOrderBar(BaseToolbar):
         assert self.n == int(self.model)
         self._add_nspin_widgets()
         self._add_popup()
-    #     self.w_array = np.array([[0.5]])
-    #
+
     def _set_name(self):
         self.setObjectName('nuclei_bar' + str(self.model))
 
@@ -129,8 +127,8 @@ class SecondOrderBar(BaseToolbar):
             value = self.v[i]
             widget = V_EntryWidget(name=name,
                                    value=value,
-                                   index = i,
-                                   v_array = self.v)  # TODO remove redundancy
+                                   index=i,
+                                   v_array=self.v)  # TODO remove redundancy
             # widgets.append(widget))
             widget.value_changed_signal.connect(self.on_v_toolbar_change)
             self.layout().addWidget(widget, 0)
@@ -149,7 +147,6 @@ class SecondOrderBar(BaseToolbar):
         print(f'creating a popup for {self.n}')
         self.popup = J_Popup(self)
 
-
     @pyqtSlot()
     def on_jbutton_clicked(self):
         print('j button clicked')
@@ -161,8 +158,7 @@ class SecondOrderBar(BaseToolbar):
         print(f'on_v_toolbar_change received {index, value}')
         self.v[index] = value  # TODO: remove redundancy with on_v_popup_change
         print(f'self.v is now {self.v}')
-        self.popup.reset()  # TODO: make sure popup v update doesn't trigger
-                            # multiple calls
+        self.popup.reset()  # TODO: make sure popup v update doesn't trigger multiple calls
         self.request_update()
 
     @pyqtSlot(tuple)
@@ -173,18 +169,6 @@ class SecondOrderBar(BaseToolbar):
         # self.v[index] = value
         toolbar_widget = self.v_widgets[index]
         toolbar_widget.entry.setValue(value)
-        # self.request_update()
-
-        # i = int(name[-1]) - 1
-        # # print(f'change request: name {name}, value {value}')
-        # # print(f'before change: toolbar data {self.data}')
-        # # print(f'before change: mainwindow state {self.mainwindow.view_state}')
-        # self.v[i] = value
-        # # self._set_data()
-        # # self._set_state()
-        # print(f'after change: {self.v}')
-        # print(f'after change: mainwindow state {self.mainwindow.view_state}')
-        # self.request_update()
 
     @pyqtSlot(tuple)
     def on_j_change(self, data):
@@ -196,80 +180,12 @@ class SecondOrderBar(BaseToolbar):
         self.request_update()
 
     def request_update(self):
-        self.mainwindow.update('nspin', self.n)
+        self.mainwindow.request_update('nspin', self.n)
 
     def reset(self):
         for i, widget in enumerate(self.v_widgets):
             self.v[i] = widget.value()
         self.request_update()
-
-
-    # def add_frequency_widgets(self, n):
-    #     for freq in range(n):
-    #         vbox = ArrayBox(self, array=self.v, coord=(0, freq),
-    #                         name='V' + str(freq + 1),
-    #                         controller=self.request_plot)
-    #         vbox.pack(side=LEFT)
-    #
-    # def add_peakwidth_widget(self):
-    #     wbox = ArrayBox(self, array=self.w_array, coord=(0, 0), name="W",
-    #                     controller=self.request_plot)
-    #     wbox.pack(side=LEFT)
-    #
-    # def add_J_button(self, n):
-    #     vj_button = Button(self, text="Enter Js",
-    #                        command=lambda: self.vj_popup(n))
-    #     vj_button.pack(side=LEFT, expand=N, fill=NONE)
-    #
-    # def vj_popup(self, n):
-    #     """
-    #     Creates a new Toplevel window that provides entries for both
-    #     frequencies and J couplings, and updates self.v and self.j when
-    #     entries change.
-    #     :param n: number of spins
-    #     """
-    #     tl = Toplevel()
-    #     Label(tl, text='Second-Order Simulation').pack(side=TOP)
-    #     datagrid = Frame(tl)
-    #
-    #     # For gridlines, background set to the line color (e.g. 'black')
-    #     datagrid.config(background='black')
-    #
-    #     Label(datagrid, bg='gray90').grid(row=0, column=0, sticky=NSEW,
-    #                                       padx=1, pady=1)
-    #     for col in range(1, n + 1):
-    #         Label(datagrid, text='V%d' % col, width=8, height=3,
-    #               bg='gray90').grid(
-    #             row=0, column=col, sticky=NSEW, padx=1, pady=1)
-    #
-    #     for row in range(1, n + 1):
-    #         vtext = "V" + str(row)
-    #         v = ArrayBox(datagrid, array=self.v,
-    #                      coord=(0, row - 1),  # V1 stored in v[0, 0], etc.
-    #                      name=vtext, color='gray90',
-    #                      controller=self.request_plot)
-    #         v.grid(row=row, column=0, sticky=NSEW, padx=1, pady=1)
-    #         for col in range(1, n + 1):
-    #             if col < row:
-    #                 j = ArrayBox(datagrid, array=self.j,
-    #                              # J12 stored in j[0, 1] (and j[1, 0]) etc
-    #                              coord=(col - 1, row - 1),
-    #                              name="J%d%d" % (col, row),
-    #                              controller=self.request_plot)
-    #                 j.grid(row=row, column=col, sticky=NSEW, padx=1, pady=1)
-    #             else:
-    #                 Label(datagrid, bg='grey').grid(
-    #                     row=row, column=col, sticky=NSEW, padx=1, pady=1)
-    #
-    #     datagrid.pack()
-    #
-    # def request_plot(self):
-    #     """Adapt 2D array data to kwargs of correct type for the controller."""
-    #     kwargs = {'v': self.v[0, :],  # controller takes 1D array of freqs
-    #               'j': self.j,
-    #               'w': self.w_array[0, 0]}  # controller takes float for w
-    #
-    #     self.controller.update_view_plot('nspin', **kwargs)
 
 
 class J_Popup(QDialog):
@@ -302,13 +218,11 @@ class J_Popup(QDialog):
         for row in range(1, caller.n + 1):
             entry = V_EntryWidget(name=f'V{row}',
                                   value=caller.v[row - 1],
-                                  index = row - 1,
-                                  v_array = caller.v  # TODO remove redundancy
+                                  index=row - 1,
+                                  v_array=caller.v  # TODO remove redundancy
                                   )
             entry.setSizePolicy(fixed)
             self.v_widgets.append(entry)
-
-                                  # v_array caller.v[row - 1])
             entry.value_changed_signal.connect(caller.on_v_popup_change)
             entrybox = self.add_background(entry)
             entrybox.setSizePolicy(fixed)
@@ -316,8 +230,6 @@ class J_Popup(QDialog):
         for col in range(1, caller.n):
             self.j_widgets[col - 1] = {}
             for row in range(1, caller.n + 1):
-            # for col in range(1, caller.n):
-            #     self.j_widgets[col - 1] = {}
                 if col < row:
                     j_entry = J_EntryWidget(name=f'J{col}{row}',
                                             value=caller.j[col - 1, row - 1],
@@ -326,18 +238,12 @@ class J_Popup(QDialog):
                                             )
                     self.j_widgets[col - 1][row - 1] = j_entry
                     j_entry.value_changed_signal.connect(caller.on_j_change)
-                                 # controller=self.request_plot)
                     j_entry.setSizePolicy(fixed)
                     j_entrybox = self.add_background(j_entry)
                     j_entrybox.setSizePolicy(fixed)
                     layout.addWidget(j_entrybox, row, col)
                 else:
                     layout.addWidget(self.grey(), row, col)
-                # else:
-                #     Label(datagrid, bg='grey').grid(
-                #         row=row, column=col, sticky=NSEW, padx=1, pady=1)
-        # self.setLayout(layout)
-        # layout.setColumnMinimumWidth(caller.n + 1, layout.columnMinimumWidth(0))
 
     def reset(self):
         print(f'j dump for spin {self.caller.n}:')
@@ -361,47 +267,7 @@ class J_Popup(QDialog):
         layout.addWidget(widget)
         backing.setLayout(layout)
         return backing
-        # def vj_popup(self, n):
-    #     """
-    #     Creates a new Toplevel window that provides entries for both
-    #     frequencies and J couplings, and updates self.v and self.j when
-    #     entries change.
-    #     :param n: number of spins
-    #     """
-    #     tl = Toplevel()
-    #     Label(tl, text='Second-Order Simulation').pack(side=TOP)
-    #     datagrid = Frame(tl)
-    #
-    #     # For gridlines, background set to the line color (e.g. 'black')
-    #     datagrid.config(background='black')
-    #
-    #     Label(datagrid, bg='gray90').grid(row=0, column=0, sticky=NSEW,
-    #                                       padx=1, pady=1)
-    #     for col in range(1, n + 1):
-    #         Label(datagrid, text='V%d' % col, width=8, height=3,
-    #               bg='gray90').grid(
-    #             row=0, column=col, sticky=NSEW, padx=1, pady=1)
-    #
-    #     for row in range(1, n + 1):
-    #         vtext = "V" + str(row)
-    #         v = ArrayBox(datagrid, array=self.v,
-    #                      coord=(0, row - 1),  # V1 stored in v[0, 0], etc.
-    #                      name=vtext, color='gray90',
-    #                      controller=self.request_plot)
-    #         v.grid(row=row, column=0, sticky=NSEW, padx=1, pady=1)
-    #         for col in range(1, n + 1):
-    #             if col < row:
-    #                 j = ArrayBox(datagrid, array=self.j,
-    #                              # J12 stored in j[0, 1] (and j[1, 0]) etc
-    #                              coord=(col - 1, row - 1),
-    #                              name="J%d%d" % (col, row),
-    #                              controller=self.request_plot)
-    #                 j.grid(row=row, column=col, sticky=NSEW, padx=1, pady=1)
-    #             else:
-    #                 Label(datagrid, bg='grey').grid(
-    #                     row=row, column=col, sticky=NSEW, padx=1, pady=1)
-    #
-    #     datagrid.pack()
+
 
 class DNMR_Bar(MultipletBar):
     def __int__(self, *args, **kwargs):
@@ -414,7 +280,7 @@ class DNMR_Bar(MultipletBar):
         self.setObjectName(f'{self.model}')
 
     def request_update(self):
-        self.mainwindow.update('dnmr', self.model)
+        self.mainwindow.request_update('dnmr', self.model)
 
 
 def toolbar_stack(mainwindow, settings):
@@ -442,18 +308,3 @@ def toolbar_stack(mainwindow, settings):
         mainwindow.toolbars[toolbar.objectName()] = toolbar
     stack_toolbars.setCurrentWidget(mainwindow.toolbars['multiplet_AB'])
     return stack_toolbars
-
-
-
-
-if __name__ == '__main__':
-    import sys
-    from PySide2.QtWidgets import QApplication, QMainWindow
-
-    app = QApplication(sys.argv)
-    params = {'Jab': 12.0, 'Vab': 15.0, 'Vcentr': 150.0}
-    toolbar = BaseToolbar(None, params)
-    window = QMainWindow()
-    window.setCentralWidget(toolbar)
-    window.show()
-    sys.exit(app.exec_())

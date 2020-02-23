@@ -2,6 +2,7 @@
 Model.
 """
 
+
 def parse_posargs(params):
     """
     Converts params to a list of numeric arguments for the model_name, IF the
@@ -54,10 +55,6 @@ def parse_abx(params):
     return parse_posargs(new_params)
 
 
-# def parse_abx(params):
-#     pass
-
-
 def parse_abx3(params):
     pass
 
@@ -84,10 +81,8 @@ def parse_first_order(params):
     singlet = (_Vcentr, 1)  # using default intensity of 1
     allcouplings = [(_Jax, _a), (_Jbx, _b), (_Jcx, _c), (_Jdx, _d)]
     couplings = [coupling for coupling in allcouplings if coupling[1] != 0]
-    data = {'signal': singlet,
-            'couplings': couplings}
-    # return data
     return singlet, couplings
+
 
 def parse_second_order(params):
     pass
@@ -107,6 +102,7 @@ class Adapter:
     def __init__(self):
         pass
 
+
 def view_to_model(model, params):
     adapters = {
         'AB': parse_posargs,
@@ -122,28 +118,3 @@ def view_to_model(model, params):
     }
     print(f'adapter received {model} {params}')
     return adapters[model](params)
-    # if model not in adapters:
-    #     print('No adapter for model_name found')
-    #     return None
-    # if model == 'ABX':
-    #     print('ABX called')
-    #     return parse_abx(params)
-    # else:
-    #     # return adapters[model_name](params)
-    #     return parse_posargs(params)
-
-
-
-
-
-
-    def _parse_multiplet(self):
-        pass
-
-    def _parse_abc(self):
-        pass
-
-    def _parse_dnmr(self):
-        pass
-
-

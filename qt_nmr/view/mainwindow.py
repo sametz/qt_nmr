@@ -1,7 +1,5 @@
-import sys
-
 from PySide2.QtCore import Slot as pyqtSlot
-from PySide2.QtWidgets import QMainWindow, QRadioButton, QButtonGroup, QWidget
+from PySide2.QtWidgets import QMainWindow, QRadioButton
 
 from qt_nmr.view.settings import view_defaults
 from qt_nmr.view.ui import UiMainWindow
@@ -19,12 +17,6 @@ class MainWindow(QMainWindow):
         print(f'after mainwindow init, toolbars = {self.toolbars}')
 
     def connect_widgets(self):
-        # multiplet_button = self.findChild(QRadioButton, 'multiplet_button')
-        # abc_button = self.findChild(QRadioButton, 'abc_button')
-        # dnmr_button = self.findChild(QRadioButton, 'dnmr_button')
-        #
-        # calctype_buttongroup = self.findChild(QButtonGroup, 'calctype_buttongroup')
-        # print('found buttongroup ', calctype_buttongroup)
         self._ui.calctype.buttongroup.buttonClicked.connect(
             self.select_calctype)
         self._ui.multiplet_menu.buttongroup.buttonClicked.connect(
@@ -35,7 +27,6 @@ class MainWindow(QMainWindow):
             self.select_toolbar)
         self._ui.stack_model_selections.currentChanged.connect(
             self.refresh_toolbar
-            # self.select_toolbar(self._ui.stack_model_selections.b)
         )
         self._ui.toolbars.currentChanged.connect(self.on_toolbar_change)
 
@@ -45,16 +36,6 @@ class MainWindow(QMainWindow):
         current_modelframe = self._ui.stack_model_selections.currentWidget()
         current_modelbutton = current_modelframe.buttongroup.checkedButton()
         self.select_toolbar(current_modelbutton)
-        # self._ui.calctype.buttongroup.buttonClicked(abc_button).connect(
-        #     self.select_abc_menu)
-        # self._ui.calctype.buttongroup.buttonClicked(dnmr_button).connect(
-        #     self.select_dnmr_menu)
-        # calctype_buttongroup.buttonClicked(multiplet_button).connect(
-        #     self.select_multiplet_menu)
-        # calctype_buttongroup.buttonClicked(abc_button).connect(
-        #     self.select_abc_menu)
-        # calctype_buttongroup.buttonClicked(dnmr_button).connect(
-        #     self.select_dnmr_menu)
 
     @pyqtSlot(QRadioButton)
     def select_calctype(self, button):
@@ -63,7 +44,7 @@ class MainWindow(QMainWindow):
         options = {'multiplet_button': self.select_multiplet_menu,
                    'abc_button': self.select_abc_menu,
                    'dnmr_button': self.select_dnmr_menu}
-        if not name in options:
+        if name not in options:
             print('ERROR button name mismatch')
         else:
             options[name]()
@@ -113,12 +94,7 @@ class MainWindow(QMainWindow):
         current_toolbar = self._ui.toolbars.currentWidget()
         current_toolbar.request_update()
 
-    def update(self, calctype, model):
-        # print(f'old view state: {self.view_state}')
-        # self.view_state[calctype][model_name] = data[model_name]
-        # print(f'new view state: {self.view_state}')
-        # print('multiplet contents: ')
-        # self._dump_calctype(calctype)
+    def request_update(self, calctype, model):
         print(f'data to send to controller for {calctype} {model}: ')
         print(f'{self.view_state[calctype][model]}')
         if calctype == 'nspin':
@@ -131,20 +107,3 @@ class MainWindow(QMainWindow):
         self._ui.plot.clearPlots()
         print(f'mainwindow plot received {x[:10], y[:10]}')
         self._ui.plot.plot(x, y, pen='b')
-
-    # def _dump_calctype(self, calctype):
-    #     """temp method for debugging."""
-    #     for model, params in self.view_state[calctype].items():
-    #         print(model)
-    #         print([key for key in params])
-    #         print([val for val in params.values()])
-
-
-
-
-if __name__ == '__main__':
-    from PySide2.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())

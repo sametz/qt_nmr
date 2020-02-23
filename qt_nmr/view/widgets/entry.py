@@ -8,8 +8,10 @@ from PySide2.QtWidgets import (QWidget, QVBoxLayout, QDoubleSpinBox, QLabel,
 
 MAXIMUM = QSizePolicy.Maximum
 
+
 class EntryWidget(QWidget):
     value_changed_signal = pyqtSignal(tuple)
+
     def __init__(self, name, value, layout=QVBoxLayout, entry=QDoubleSpinBox,
                  *args, **kwargs):
         # self.value_changed_signal = pyqtSignal(tuple)
@@ -29,7 +31,7 @@ class EntryWidget(QWidget):
         layout.addWidget(self.entry)
         self.entry.setValue(value)
         self.setLayout(layout)
-        self.layout().setContentsMargins(0,0,0,0)
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
         self.setSizePolicy(MAXIMUM, MAXIMUM)
 

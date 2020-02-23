@@ -1,6 +1,5 @@
 import numpy as np
 from PySide2.QtCore import QObject
-from PySide2.QtCore import Signal as pyqtSignal
 from nmrsim.discrete import AB, AB2, ABX, ABX3, AAXX, AABB
 from nmrsim.dnmr import dnmr_two_singlets, dnmr_AB
 from nmrsim.firstorder import multiplet
@@ -33,11 +32,10 @@ class Model(QObject):
         if min_ > max_:
             print(f'WARNING min {min_} greater than max {max_}')
         lin_min, lin_max = min_ - margin, max_ + margin
-        window = lin_max - lin_min  #Hz
-        datapoints = round (window / resolution)
+        window = lin_max - lin_min  # Hz
+        datapoints = round(window / resolution)
         print(f'making linspace for {min_} {max_} {resolution}')
         return np.linspace(lin_min, lin_max, datapoints)
-
 
     def update(self, calctype, model_name, *args):
         print('-'*10)
@@ -54,39 +52,10 @@ class Model(QObject):
             x, y = self.functions[model_name](*args)
         else:
             print(f'calctype {calctype} not implemented')
-        # # model_name, params = request.items()
-        # # assert model_name not in self.data:
-        # print(f'model received {model_name} {args}')
-        # peaklist = self.functions[model_name](*args)
-        # # print (f'peaklist before sort: {peaklist}')
-        # print(f'peaklist is {peaklist}')
-        # peaklist.sort()
-        # min_ = peaklist[0][0]
-        # max_ = peaklist[-1][0]
-        # print(f'min, max {min_} {max_}')
-        # # print(f'peaklist after sort: {peaklist}')
-        # x = self._linspace(min_, max_)
-        # y = add_lorentzians(x, peaklist, w=0.5)
-        # print(x[:10])
-        # print(y[:10])
-        # print(max(y))
         return x, y
 
     def update_multiplet(self, model_name, *args):
         peaklist = self.functions[model_name](*args)
-        # # print (f'peaklist before sort: {peaklist}')
-        # print(f'peaklist is {peaklist}')
-        # peaklist.sort()
-        # min_ = peaklist[0][0]
-        # max_ = peaklist[-1][0]
-        # print(f'min, max {min_} {max_}')
-        # # print(f'peaklist after sort: {peaklist}')
-        # x = self._linspace(min_, max_)
-        # y = add_lorentzians(x, peaklist, w=0.5)
-        # print(x[:10])
-        # print(y[:10])
-        # print(max(y))
-        # return x, y
         return self.peaklist_to_xy(peaklist)
 
     def update_qm(self, *args):
@@ -97,43 +66,3 @@ class Model(QObject):
         x = self._linspace(peaklist)
         y = add_lorentzians(x, peaklist, w=0.5)
         return x, y
-
-    def make_linspace(self, peaklist):
-        peaklist.sort()
-        min_ = peaklist[0][0]
-        max_ = peaklist[-1][0]
-        # print(f'min, max {min_} {max_}')
-        # print(f'peaklist after sort: {peaklist}')
-        x = self._linspace(min_, max_)
-    # @property
-    # def x(self):
-    #     return self._x
-    #
-    # @property
-    # def y(self):
-    #     return self._y
-    #
-    # def update(self):
-    #     # self._base = base
-    #     # self._exp = exp
-    #     self._update_y()
-    #
-    # @property
-    # def base(self):
-    #     return self._base
-    #
-    # @base.setter
-    # def base(self, value):
-    #     self._base = value
-    #     self.update()
-    #     self.value_changed.emit((self._x, self._y))
-    #
-    # @property
-    # def exp(self):
-    #     return self._exp
-    #
-    # @exp.setter
-    # def exp(self, value):
-    #     self._exp = value
-    #     self.update()
-    #     self.value_changed.emit((self._x, self._y))

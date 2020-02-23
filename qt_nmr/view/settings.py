@@ -193,6 +193,7 @@ def spin8():
     J = J + J.T
     return v, J
 
+
 view_defaults = {
     'multiplet': {
         'AB': ABdict,

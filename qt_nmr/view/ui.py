@@ -1,11 +1,12 @@
 from pyqtgraph import PlotWidget, setConfigOption
-from PySide2.QtWidgets import (QHBoxLayout, QLabel, QStackedWidget,
+from PySide2.QtWidgets import (QHBoxLayout, QStackedWidget,
                                QVBoxLayout, QWidget)
 
 from qt_nmr.view.widgets.toolbars import toolbar_stack
 from qt_nmr.view.widgets.buttons import (
     CalcTypeButtonGroup, ABC_ButtonGroup, MultipletButtonGroup,
     DNMR_ButtonGroup)
+
 
 class UiMainWindow:
     def setupUi(self, main_window):

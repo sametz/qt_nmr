@@ -1,4 +1,3 @@
-from nmrsim.discrete import AB, AB2, ABX, ABX3, AAXX, AABB
 from PySide2.QtCore import QObject
 from PySide2.QtCore import Slot as pyqtSlot
 
@@ -24,7 +23,6 @@ class Controller(QObject):
         x, y = self._model.update(calctype, model_name, *args)
         print(f'sending to plot {x[:10], y[:10]}')
         self.view.plot(x, y)
-
 
     @pyqtSlot(float)
     def change_base(self, value):

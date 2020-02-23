@@ -1,4 +1,3 @@
-from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtWidgets import (QGroupBox, QRadioButton, QVBoxLayout,
                                QMainWindow, QStackedWidget, QWidget,
                                QGridLayout, QToolBar, QLabel, QButtonGroup,
@@ -170,12 +169,3 @@ class myGui(QMainWindow):
     def switchdisplay(self, id):
         print('button %d has been pressed' % id)
         self.stackedWidget.setCurrentIndex(id)
-
-
-if __name__ == '__main__':
-    import sys
-    from PySide2.QtWidgets import QApplication
-    app = QApplication(sys.argv)
-    window = myGui()
-    window.show()
-    sys.exit(app.exec_())

@@ -5,7 +5,6 @@ from PySide2.QtWidgets import QApplication
 
 from qt_nmr.controller.controller import Controller
 from qt_nmr.model.model import Model
-from qt_nmr.view.mainwindow import MainWindow
 
 
 class App(QApplication):
@@ -13,7 +12,6 @@ class App(QApplication):
         super(App, self).__init__(sys_argv)
         self.model = Model()
         self.main_controller = Controller(self.model)
-        # self.main_view = MainWindow(self.main_controller)
         self.main_view = self.main_controller.view
         self.main_view.show()
 
