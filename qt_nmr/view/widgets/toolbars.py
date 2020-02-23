@@ -9,6 +9,7 @@ from qt_nmr.view.widgets.entry import (EntryWidget, V_EntryWidget,
                                        J_EntryWidget, Color)
 
 
+MINIMUM = QSizePolicy.Minimum
 MAXIMUM = QSizePolicy.Maximum
 
 
@@ -294,7 +295,9 @@ class J_Popup(QDialog):
         for col in range(1, caller.n):
             label = QLabel(f'V{col}')
             label.setAlignment(Qt.AlignHCenter)
+            label.setSizePolicy(MINIMUM, MAXIMUM)
             labelbox = self.add_background(label)
+            labelbox.setSizePolicy(MINIMUM, MAXIMUM)
             layout.addWidget(labelbox, 0, col)
         for row in range(1, caller.n + 1):
             entry = V_EntryWidget(name=f'V{row}',
@@ -310,7 +313,7 @@ class J_Popup(QDialog):
             entrybox = self.add_background(entry)
             entrybox.setSizePolicy(fixed)
             layout.addWidget(entrybox, row, 0)
-        for col in range(1, caller.n + 1):
+        for col in range(1, caller.n):
             self.j_widgets[col - 1] = {}
             for row in range(1, caller.n + 1):
             # for col in range(1, caller.n):
