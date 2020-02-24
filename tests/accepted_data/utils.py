@@ -5,12 +5,22 @@ run are correct, and that view.settings doesn't change.
 TODO: write unit tests to verify.
 """
 import json
+import os
+from pathlib import Path
 
 from qt_nmr.controller.adapter import view_to_model
 from qt_nmr.model.model import Model
 from qt_nmr.view.settings import view_defaults
 
 _model = Model()
+
+
+def load_lineshape(filename):
+    data_dir = os.path.dirname(__file__)
+    file_path = Path(data_dir, filename)
+    with file_path.open('r') as f:
+        data = json.load(f)
+        return data
 
 
 def save_lineshapes():
