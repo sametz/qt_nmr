@@ -64,6 +64,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot(QRadioButton)
     def select_toolbar(self, button):
         name = button.objectName()
+        print('**********BUTTON CLICK**********')
         print(f'current model button is {name}')
         button_bars = {
             'AB_button': 'multiplet_AB',

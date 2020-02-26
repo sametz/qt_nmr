@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import pytest
 # from pytestqt import qtbot
@@ -58,6 +60,10 @@ def view_buttons(view):
     return buttons
 
 
+def view_lineshape(view):
+    return view._ui.plot.listDataItems()[0].getData()
+
+
 class TestApp:
     def mvc(self):
         model = Model()
@@ -110,6 +116,8 @@ class TestApp:
         qtbot.addWidget(view)
         buttons = view_buttons(view)
         for model, button in buttons['multiplet'].items():
+            # qtbot.wait(1000)
+            # time.sleep(1)
             qtbot.mouseClick(button, QtCore.Qt.LeftButton)
             filename = f'multiplet_{model}.json'
             dataitem = view._ui.plot.listDataItems()[0]
@@ -125,10 +133,68 @@ class TestApp:
         for model, button in buttons['dnmr'].items():
             qtbot.mouseClick(button, QtCore.Qt.LeftButton)
             filename = f'dnmr_{model}.json'
-            dataitem = view._ui.plot.listDataItems()[0]
-            view_data = dataitem.getData()
+            # dataitem = view._ui.plot.listDataItems()[0]
+            # view_data = dataitem.getData()
+            view_data = view_lineshape(view)
             expected_data = load_lineshape(filename)
             np.testing.assert_array_almost_equal(view_data, expected_data)
+
+    def test_all_nspin(self, qtbot):
+        # currently not working. For some reason, qtbot clicking the nspin
+        # buttons isn't working.
+        model, view, controller = self.mvc()
+        qtbot.addWidget(view)
+        buttons = view_buttons(view)
+        qtbot.mouseClick(buttons['calctype']['abc'], QtCore.Qt.LeftButton)
+        np.testing.assert_array_almost_equal(view_lineshape(view),
+                                             load_lineshape('nspin_2.json'))
+        for number, button in buttons['nspin'].items():
+            print(number, button)
+            qtbot.mouseClick(button, QtCore.Qt.LeftButton)
+            # qtbot.wait(1000)
+            # time.sleep(1)
+        # n3button = buttons['nspin']['3']
+        n3button = view._ui.abc_menu.buttons['3']
+        assert n3button.objectName() == 'nuclei_button3'
+        qtbot.mouseClick(n3button, QtCore.Qt.LeftButton)
+        qtbot.wait(1000)
+        time.sleep(1)
+        current_nbutton = view._ui.stack_model_selections.currentWidget().buttongroup.checkedButton()
+        print('current nbutton: ', current_nbutton.objectName())
+
+        print('current toolbar: ', view._ui.toolbars.currentWidget().objectName())
+        np.testing.assert_array_almost_equal(view_lineshape(view),
+                                             load_lineshape('nspin_3.json'))
+        #
+        # dataitem = view._ui.plot.listDataItems()[0]
+        # view_data = dataitem.getData()
+        # expected_data = load_lineshape('nspin_3.json')
+        # qtbot.wait(1000)
+        # time.sleep(1)
+        # np.testing.assert_array_almost_equal(view_data, expected_data)
+
+
+    def test_nspin_entries(self, qtbot):
+        # Started to write test, but nspin button clicks not working
+        # spun off as test_all_nspin to find problem
+        model, view, controller = self.mvc()
+        qtbot.addWidget(view)
+        buttons = view_buttons(view)
+        qtbot.wait(1000)
+        time.sleep(1)
+        qtbot.mouseClick(buttons['calctype']['abc'], QtCore.Qt.LeftButton)
+        qtbot.wait(1000)
+        time.sleep(1)
+        n3button = buttons['nspin']['3']
+        assert n3button.objectName() == 'nuclei_button3'
+        qtbot.mouseClick(n3button, QtCore.Qt.LeftButton)
+
+        dataitem = view._ui.plot.listDataItems()[0]
+        view_data = dataitem.getData()
+        expected_data = load_lineshape('nspin_3.json')
+        qtbot.wait(1000)
+        time.sleep(1)
+        np.testing.assert_array_almost_equal(view_data, expected_data)
 
 # def test_basic_search(qtbot, tmpdir):
 #     """
