@@ -16,7 +16,7 @@ class EntryWidget(QWidget):
                  *args, **kwargs):
         # self.value_changed_signal = pyqtSignal(tuple)
         super(EntryWidget, self).__init__(*args, **kwargs)
-        self.name = name
+        self.setObjectName(name)
         self.value = value
         layout = layout()
         self.entry = entry()
@@ -41,14 +41,14 @@ class EntryWidget(QWidget):
     @pyqtSlot()
     def on_entry_value_changed(self, value):
         # print('on_entry_value_changed')
-        # print(f'name: {self.name}')
+        # print(f'name: {self.objectName()}')
         # mydict = self.parent().data[self.parent().model_name]
         # print(f'parent data: {self.parent().data}')
         # print(f'my dict: {mydict}')
-        # assert self.name in mydict
-        # mydict[self.name] = value
+        # assert self.objectName() in mydict
+        # mydict[self.objectName()] = value
         # print('new parent data: ', self.parent().data)
-        self.value_changed_signal.emit((self.name, value))
+        self.value_changed_signal.emit((self.objectName(), value))
 
 
 class V_EntryWidget(EntryWidget):

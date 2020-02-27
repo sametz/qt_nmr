@@ -140,10 +140,10 @@ class SecondOrderBar(BaseToolbar):
         pass
 
     def _add_J_button(self):
-        j_button = QPushButton('Enter Js')
-        self.layout().addWidget(j_button, 0)
-        j_button.setSizePolicy(MAXIMUM, MAXIMUM)
-        j_button.clicked.connect(self.on_jbutton_clicked)
+        self.j_button = QPushButton('Enter Js')
+        self.layout().addWidget(self.j_button, 0)
+        self.j_button.setSizePolicy(MAXIMUM, MAXIMUM)
+        self.j_button.clicked.connect(self.on_jbutton_clicked)
 
     def _add_popup(self):
         self.popup = J_Popup(self)

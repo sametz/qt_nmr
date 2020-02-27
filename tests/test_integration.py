@@ -7,6 +7,7 @@ import pytest
 
 from qt_nmr.controller.controller import Controller
 from qt_nmr.model.model import Model
+from qt_nmr.view.widgets.entry import V_EntryWidget
 from tests.accepted_data.utils import load_lineshape
 
 # There's a lot of repetition in the test code, but trying to reduce repetition
@@ -217,7 +218,7 @@ class TestApp:
         # np.testing.assert_array_almost_equal(view_lineshape(view),
         #                                      load_lineshape('nspin_3.json'))
 
-    @pytest.mark.skip()
+    # @pytest.mark.skip()
     def test_nspin_entries(self, qtbot):
         # Started to write test, but nspin button clicks not working
         # spun off as test_all_nspin to find problem.
@@ -228,18 +229,67 @@ class TestApp:
         qtbot.addWidget(view)
 
         # WHEN the 'abc...' models are selected
+        buttons = view_buttons(view)
+        qtbot.mouseClick(buttons['calctype']['abc'], QtCore.Qt.LeftButton)
+
         # AND 3 nuclei is selected
+        n3button = buttons['nspin']['3']
+        n3button.animateClick(msec=0)  # workaround for qtbot.click failure
+        qtbot.wait(100)
         # THEN the plot data matches that expected for the 3-spin simulation
+        assert np.allclose(
+            view_lineshape(view),
+            load_lineshape(f'nspin_3.json'))
 
         # WHEN the V1 toolbar entry is changed to 140 Hz
+        current_toolbar = view._ui.toolbars.currentWidget()
+        # assert current_toolbar.objectName() == 'nuclei_bar3'
+        # assert len(current_toolbar.v_widgets) == 3
+        # assert isinstance(current_toolbar.v_widgets[0], V_EntryWidget)
+        v1_widget = view._ui.toolbars.currentWidget().v_widgets[0]
+        assert v1_widget.objectName() == 'V1'
+        v1_widget.entry.setValue(140.0)
+        qtbot.wait(100)
         # THEN the plot data no longer matches expected
+        try:
+            assert not np.allclose(
+                view_lineshape(view),
+                load_lineshape(f'nspin_3.json'))
+        except ValueError as e:
+            pass  # if arrays can't be compared, they're different
 
         # BUT WHEN the J-value dialog is selected
+        j_button = current_toolbar.j_button
+        qtbot.mouseClick(j_button, QtCore.Qt.LeftButton)
+        qtbot.wait(100)
+        dialog = current_toolbar.popup
+
         # AND the dialog is used to change:
         # - V2 to 190 Hz,
+        v2_widget = dialog.v_widgets[1]
+        assert v2_widget.objectName() == 'V2'
+        v2_widget.entry.setValue(190.0)
+
         # - V3 to 115 Hz,
+        v2_widget = dialog.v_widgets[2]
+        assert v2_widget.objectName() == 'V3'
+        v2_widget.entry.setValue(115.0)
+
         # - J12 to 3 Hz,
+        J12_widget = dialog.j_widgets[0][1]  # dict by matrix index, not name
+        assert J12_widget.objectName() == 'J12'
+        J12_widget.entry.setValue(3.0)
+
         # - J13 to 6 Hz,
+        J13_widget = dialog.j_widgets[0][2]
+        assert J13_widget.objectName() == 'J13'
+        J13_widget.entry.setValue(6.0)
+
         # - J23 to 12 Hz
+        J23_widget = dialog.j_widgets[1][2]
+        assert J23_widget.objectName() == 'J23'
+        J23_widget.entry.setValue(12.0)
         # THEN the plot data once again matches expected
-        assert 1 == 2
+        assert np.allclose(
+            view_lineshape(view),
+            load_lineshape(f'nspin_3.json'))
