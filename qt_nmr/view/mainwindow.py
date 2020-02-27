@@ -66,6 +66,8 @@ class MainWindow(QMainWindow):
         name = button.objectName()
         print('**********BUTTON CLICK**********')
         print(f'current model button is {name}')
+        if name.startswith('nuclei'):
+            print(f'active button is {self._ui.abc_menu.buttongroup.checkedButton().objectName()}')
         button_bars = {
             'AB_button': 'multiplet_AB',
             'AB2_button': 'multiplet_AB2',
