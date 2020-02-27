@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 from PySide2 import QtCore
+import pytest
 
 from qt_nmr.controller.controller import Controller
 from qt_nmr.model.model import Model
@@ -154,8 +155,8 @@ class TestApp:
         qtbot.mouseClick(buttons['calctype']['dnmr'], QtCore.Qt.LeftButton)
         print('\a')
         for model, button in buttons['dnmr'].items():
-            qtbot.wait(1000)
-            time.sleep(1)
+            # qtbot.wait(1000)
+            # time.sleep(1)
             qtbot.mouseClick(button, QtCore.Qt.LeftButton)
             # print('\a')
             filename = f'dnmr_{model}.json'
@@ -165,6 +166,7 @@ class TestApp:
             expected_data = load_lineshape(filename)
             np.testing.assert_array_almost_equal(view_data, expected_data)
 
+    @pytest.mark.skip()
     def test_all_nspin(self, qtbot):
         # currently not working. For some reason, qtbot clicking the nspin
         # buttons isn't working.
@@ -200,6 +202,7 @@ class TestApp:
         np.testing.assert_array_almost_equal(view_lineshape(view),
                                              load_lineshape('nspin_3.json'))
 
+    @pytest.mark.skip()
     def test_nspin_entries(self, qtbot):
         # Started to write test, but nspin button clicks not working
         # spun off as test_all_nspin to find problem.
@@ -224,3 +227,4 @@ class TestApp:
         # - J13 to 6 Hz,
         # - J23 to 12 Hz
         # THEN the plot data once again matches expected
+        assert 1 == 2

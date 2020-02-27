@@ -1,6 +1,9 @@
 """Converts parameters sent by the view to parameters that can be used by the
 Model.
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def parse_posargs(params):
@@ -19,22 +22,12 @@ def parse_posargs(params):
     return [val for val in params.values()]
 
 
-# def parse_ab(params):
-#     args = [params[var] for var in ['Jab', 'Vab', 'Vcentr']]
-#     return args
-#
-#
-# def parse_ab2(params):
-#     # A separate function in case ab and ab2 parameters/model_name ever diverge
-#     return parse_ab(params)
-
-
 def parse_abx(params):
     """Matches ABX behavior to WINDNMR behavior.
 
     In WINDNMR, vx was hard coded to equal vb + 100.
     """
-    print(f'params before abx conversion: {params}')
+    logger.debug(f'params before abx conversion: {params}')
     # new dict's order is important therefore converted item-wise
     new_params = {
         'Jab': params['Jab'],
@@ -51,24 +44,12 @@ def parse_abx(params):
     Vab = new_params['Vab']
     # Reich's ABX: vx initialized as vb + 100
     new_params['vx'] = Vcentr + (Vab / 2) + 100
-    print(f'params after conversion: {new_params}')
+    logger.debug(f'params after conversion: {new_params}')
     return parse_posargs(new_params)
-#
-#
-# def parse_abx3(params):
-#     pass
-#
-#
-# def parse_aaxx(params):
-#     pass
-#
-#
-# def parse_aabb(params):
-#     pass
 
 
 def parse_first_order(params):
-    print(f'parse_first_order received {params}')
+    logger.debug(f'parse_first_order received {params}')
     _Jax = params['JAX']
     _a = params['#A']
     _Jbx = params['JBX']
@@ -84,21 +65,10 @@ def parse_first_order(params):
     return singlet, couplings
 
 
-# def parse_second_order(params):
-#     pass
-
-
 def parse_dnmr_two_singlets(params):
     param_copy = params.copy()
     param_copy['%a'] = params['%a'] / 100
     return [val for val in param_copy.values()]
-# def parse_dnmr_ab(params):
-#     pass
-#
-#
-# class Adapter:
-#     def __init__(self):
-#         pass
 
 
 def view_to_model(model, params):
@@ -110,9 +80,8 @@ def view_to_model(model, params):
         'AAXX': parse_posargs,
         'AABB': parse_posargs,
         '1stOrd': parse_first_order,
-        # 'second_order': parse_second_order,
         'dnmr_two_singlets': parse_dnmr_two_singlets,
         'dnmr_ab': parse_posargs
     }
-    print(f'adapter received {model} {params}')
+    logger.debug(f'adapter received {model} {params}')
     return adapters[model](params)

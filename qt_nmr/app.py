@@ -18,5 +18,11 @@ class App(QApplication):
 
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG,
+                        format=' %(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logger = logging.getLogger(__name__)
+    numba_logger = logging.getLogger('numba')
+    numba_logger.setLevel(logging.CRITICAL)
     app = App(sys.argv)
     sys.exit(app.exec_())

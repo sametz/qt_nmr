@@ -1,8 +1,12 @@
+import logging
+
 from PySide2.QtCore import Slot as pyqtSlot
 from PySide2.QtWidgets import QMainWindow, QRadioButton
 
 from qt_nmr.view.settings import view_defaults
 from qt_nmr.view.ui import UiMainWindow
+
+logger = logging.getLogger(__name__)
 
 
 class MainWindow(QMainWindow):
@@ -14,7 +18,6 @@ class MainWindow(QMainWindow):
         self._ui = UiMainWindow()
         self._ui.setupUi(self)
         self.connect_widgets()
-        print(f'after mainwindow init, toolbars = {self.toolbars}')
 
     def connect_widgets(self):
         self._ui.calctype.buttongroup.buttonClicked.connect(
@@ -32,42 +35,43 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def refresh_toolbar(self):
-        print(f'refresh_toolbar called')
+        logger.debug(f'refresh_toolbar called')
         current_modelframe = self._ui.stack_model_selections.currentWidget()
         current_modelbutton = current_modelframe.buttongroup.checkedButton()
         self.select_toolbar(current_modelbutton)
 
     @pyqtSlot(QRadioButton)
     def select_calctype(self, button):
-        print('select_calctype called')
+        logger.debug('select_calctype called')
         name = button.objectName()
         options = {'multiplet_button': self.select_multiplet_menu,
                    'abc_button': self.select_abc_menu,
                    'dnmr_button': self.select_dnmr_menu}
         if name not in options:
-            print('ERROR button name mismatch')
+            logging.error('ERROR button name mismatch')
         else:
             options[name]()
 
     def select_multiplet_menu(self):
-        print('multiplet menu selected')
+        logger.debug('multiplet menu selected')
         self._ui.stack_model_selections.setCurrentWidget(self._ui.multiplet_menu)
 
     def select_abc_menu(self):
-        print('ABC... menu selected')
+        logger.debug('ABC... menu selected')
         self._ui.stack_model_selections.setCurrentWidget(self._ui.abc_menu)
 
     def select_dnmr_menu(self):
-        print('DNMR menu selected')
+        logger.debug('DNMR menu selected')
         self._ui.stack_model_selections.setCurrentWidget(self._ui.dnmr_menu)
 
     @pyqtSlot(QRadioButton)
     def select_toolbar(self, button):
         name = button.objectName()
-        print('**********BUTTON CLICK**********')
-        print(f'current model button is {name}')
+        # This slot should be invoked by  test_integration.py for nspin tests,
+        # but qtbot isn't successfully clicking the nspin radio buttons, so:
+        logger.info(f'***BUTTON CLICK*** current model button is {name}')
         if name.startswith('nuclei'):
-            print(f'active button is {self._ui.abc_menu.buttongroup.checkedButton().objectName()}')
+            logger.info(f'active button is {self._ui.abc_menu.buttongroup.checkedButton().objectName()}')
         button_bars = {
             'AB_button': 'multiplet_AB',
             'AB2_button': 'multiplet_AB2',
@@ -86,11 +90,10 @@ class MainWindow(QMainWindow):
             'dnmr_twospin_button': 'dnmr_two_singlets',
             'dnmr_ab_button': 'dnmr_ab'
         }
-        print('toolbar dump ', self.toolbars)
-        print(f'button {name} corresponds to toolbar {button_bars[name]}')
-        print(f'which is {self.toolbars[button_bars[name]]}')
+        logger.debug(f'button {name} corresponds to toolbar {button_bars[name]}')
+        logger.debug(f'which is {self.toolbars[button_bars[name]]}')
         self._ui.toolbars.setCurrentWidget(self.toolbars[button_bars[name]])
-        print(f'the active bar is now {self._ui.toolbars.currentWidget()}')
+        logger.debug(f'the active bar is now {self._ui.toolbars.currentWidget()}')
 
     @pyqtSlot()
     def on_toolbar_change(self):
@@ -98,19 +101,12 @@ class MainWindow(QMainWindow):
         current_toolbar.request_update()
 
     def request_update(self, calctype, model):
-        print(f'data to send to controller for {calctype} {model}: ')
-        print(f'{self.view_state[calctype][model]}')
-        if calctype == 'nspin':
-            print(f'view update will send:')
-            print(self.view_state[calctype][model])
+        logger.debug(f'data to send to controller for {calctype} {model}: ')
+        logger.debug(f'{self.view_state[calctype][model]}')
         self.controller.update_model(calctype, model,
                                      self.view_state[calctype][model])
 
     def plot(self, x, y):
         self._ui.plot.clearPlots()
-        print(f'mainwindow plot received {x[:10], y[:10]}')
+        logger.debug(f'mainwindow plot received {x[:10], y[:10]}')
         self._ui.plot.plot(x, y, pen='b')
-        dataitem = self._ui.plot.listDataItems()
-        print('data item: ', dataitem[0].getData())
-        # print('plotted xy: ', self._ui.plot.getData())
-        # print('plotted y: ', self._ui.plot.yData)
