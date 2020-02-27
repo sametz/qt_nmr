@@ -1,3 +1,4 @@
+import logging
 import time
 
 import numpy as np
@@ -166,10 +167,11 @@ class TestApp:
             expected_data = load_lineshape(filename)
             np.testing.assert_array_almost_equal(view_data, expected_data)
 
-    @pytest.mark.skip()
-    def test_all_nspin(self, qtbot):
+    # @pytest.mark.skip()
+    def test_all_nspin(self, qtbot, caplog):
         # currently not working. For some reason, qtbot clicking the nspin
         # buttons isn't working.
+        caplog.set_level(logging.INFO)
         model, view, controller = self.mvc()
         qtbot.addWidget(view)
         buttons = view_buttons(view)
@@ -179,28 +181,41 @@ class TestApp:
                                              load_lineshape('nspin_2.json'))
         for number, button in buttons['nspin'].items():
             print(number, button)
+            if number == '2':
+                continue
             assert button in buttongroup.buttons()
             assert view._ui.abc_menu.buttons[str(number)] is button
             assert button.objectName() == f'nuclei_button{str(number)}'
-            qtbot.mouseClick(button, QtCore.Qt.LeftButton)
-            while buttongroup.checkedButton() is not button:
-                beep()
-                qtbot.wait(1000)
-                time.sleep(1)
-            ding()
-        # n3button = buttons['nspin']['3']
-        n3button = view._ui.abc_menu.buttons['3']
-        assert n3button.objectName() == 'nuclei_button3'
-        qtbot.mouseClick(n3button, QtCore.Qt.LeftButton)
-        beep()
-        qtbot.wait(1000)
-        time.sleep(1)
-        current_nbutton = view._ui.stack_model_selections.currentWidget().buttongroup.checkedButton()
-        print('current nbutton: ', current_nbutton.objectName())
+            button.animateClick(msec=0)  # workaround for qtbot.click failure
 
-        print('current toolbar: ', view._ui.toolbars.currentWidget().objectName())
-        np.testing.assert_array_almost_equal(view_lineshape(view),
-                                             load_lineshape('nspin_3.json'))
+            # following didn't work: segfaults
+            # with qtbot.waitSignal(view._ui.plot.listDataItems()[0].sigPlotChanged, timeout=5000):
+            #     button.animateClick(msec=0)
+
+            # in lieu of working update plot signal, add a suitable delay:
+            qtbot.wait(100)
+            filename = f'nspin_{number}.json'
+            np.testing.assert_array_almost_equal(view_lineshape(view),
+                                                 load_lineshape(filename))
+            # qtbot.mouseClick(button, QtCore.Qt.LeftButton)
+            # while buttongroup.checkedButton() is not button:
+            #     beep()
+            #     qtbot.wait(1000)
+            #     time.sleep(1)
+            # ding()
+        # n3button = buttons['nspin']['3']
+        # n3button = view._ui.abc_menu.buttons['3']
+        # assert n3button.objectName() == 'nuclei_button3'
+        # qtbot.mouseClick(n3button, QtCore.Qt.LeftButton)
+        # beep()
+        # qtbot.wait(1000)
+        # time.sleep(1)
+        # current_nbutton = view._ui.stack_model_selections.currentWidget().buttongroup.checkedButton()
+        # print('current nbutton: ', current_nbutton.objectName())
+        #
+        # print('current toolbar: ', view._ui.toolbars.currentWidget().objectName())
+        # np.testing.assert_array_almost_equal(view_lineshape(view),
+        #                                      load_lineshape('nspin_3.json'))
 
     @pytest.mark.skip()
     def test_nspin_entries(self, qtbot):

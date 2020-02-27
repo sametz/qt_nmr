@@ -19,7 +19,7 @@ class App(QApplication):
 
 if __name__ == '__main__':
     import logging
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.INFO,
                         format=' %(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
     numba_logger = logging.getLogger('numba')
