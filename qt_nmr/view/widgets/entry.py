@@ -59,7 +59,7 @@ class V_EntryWidget(EntryWidget):
 
     @pyqtSlot()
     def on_entry_value_changed(self, value):
-        print(f'about to emit {self.index, self.entry.value()}')
+        # print(f'about to emit {self.index, self.entry.value()}')
         self.value_changed_signal.emit((self.index, self.entry.value()))
 
 

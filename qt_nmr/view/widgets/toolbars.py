@@ -1,3 +1,5 @@
+import logging
+
 from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
                                QPushButton, QDialog, QGridLayout, QLabel,
                                QVBoxLayout, QSizePolicy)
@@ -7,6 +9,7 @@ from PySide2.QtGui import QColor, QPalette
 from qt_nmr.view.widgets.entry import (EntryWidget, V_EntryWidget,
                                        J_EntryWidget, Color)
 
+logger = logging.getLogger(__name__)
 
 MINIMUM = QSizePolicy.Minimum
 MAXIMUM = QSizePolicy.Maximum
@@ -19,7 +22,7 @@ class BaseToolbar(QWidget):
         self.mainwindow = mainwindow
         self.model = model
         self.data = params
-        print(f'toolbar model {self.model} has params {self.data}')
+        logger.debug(f'toolbar model {self.model} has params {self.data}')
 
         layout = QHBoxLayout()
         self.setLayout(layout)
@@ -47,7 +50,7 @@ class BaseToolbar(QWidget):
 class MultipletBar(BaseToolbar):
     def __init__(self, *args, **kwargs):
         super(MultipletBar, self).__init__(*args, **kwargs)
-        print(f'{self.objectName()} has data {self.data}')
+        logger.debug(f'{self.objectName()} has data {self.data}')
 
     def _set_name(self):
         self.setObjectName(f'multiplet_{self.model}_toolbar')
@@ -62,14 +65,14 @@ class MultipletBar(BaseToolbar):
     @pyqtSlot(tuple)
     def on_value_changed(self, data):
         name, value = data
-        print(f'change request: name {name}, value {value}')
-        print(f'before change: toolbar data {self.data}')
-        print(f'before change: mainwindow state {self.mainwindow.view_state}')
+        logger.debug(f'change request: name {name}, value {value}')
+        logger.debug(f'before change: toolbar data {self.data}')
+        logger.debug(f'before change: mainwindow state {self.mainwindow.view_state}')
         self.data[name] = value
         # self._set_data()
         # self._set_state()
-        print(f'after change: toolbar data {self.data}')
-        print(f'after change: mainwindow state {self.mainwindow.view_state}')
+        logger.debug(f'after change: toolbar data {self.data}')
+        logger.debug(f'after change: mainwindow state {self.mainwindow.view_state}')
         self.request_update()
 
     def request_update(self):
@@ -102,9 +105,7 @@ class SecondOrderBar(BaseToolbar):
     def __init__(self, *args, **kwargs):
         super(SecondOrderBar, self).__init__(*args, **kwargs)
         self.v, self.j = self.data
-        print(self.v, self.j)
         self.n = len(self.v)
-        print(self.n)
         assert self.n == int(self.model)
         self._add_nspin_widgets()
         self._add_popup()
@@ -145,28 +146,27 @@ class SecondOrderBar(BaseToolbar):
         j_button.clicked.connect(self.on_jbutton_clicked)
 
     def _add_popup(self):
-        print(f'creating a popup for {self.n}')
         self.popup = J_Popup(self)
 
     @pyqtSlot()
     def on_jbutton_clicked(self):
-        print('j button clicked')
+        logger.debug('j button clicked')
         self.popup.show()
 
     @pyqtSlot(tuple)
     def on_v_toolbar_change(self, data):
         index, value = data
-        print(f'on_v_toolbar_change received {index, value}')
+        logger.debug(f'on_v_toolbar_change received {index, value}')
         self.v[index] = value  # TODO: remove redundancy with on_v_popup_change
-        print(f'self.v is now {self.v}')
+        logger.debug(f'self.v is now {self.v}')
         self.popup.reset()  # TODO: make sure popup v update doesn't trigger multiple calls
         self.request_update()
 
     @pyqtSlot(tuple)
     def on_v_popup_change(self, data):
         index, value = data
-        print(f'index {index} {type(index)}')
-        print(f'value {value} {type(value)}')
+        logger.debug(f'index {index} {type(index)}')
+        logger.debug(f'value {value} {type(value)}')
         # self.v[index] = value
         toolbar_widget = self.v_widgets[index]
         toolbar_widget.entry.setValue(value)
@@ -175,7 +175,7 @@ class SecondOrderBar(BaseToolbar):
     def on_j_change(self, data):
         coords, value = data
         i, j = coords
-        print('j {coord} changed to {value}')
+        logger.debug('j {coord} changed to {value}')
         self.j[i, j] = value
         self.j[j, i] = value
         self.request_update()
@@ -203,7 +203,7 @@ class J_Popup(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
         self.layout().setSpacing(3)
-        print(f'J_Popup construction with {caller.n, caller.v}')
+        logger.debug(f'J_Popup construction with {caller.n, caller.v}')
         # Set dialog layout
         layout.addWidget(self.grey())
         self.v_widgets = []
@@ -247,16 +247,16 @@ class J_Popup(QDialog):
                     layout.addWidget(self.grey(), row, col)
 
     def reset(self):
-        print(f'j dump for spin {self.caller.n}:')
-        print(f'{self.j_widgets}')
+        logger.debug(f'j dump for spin {self.caller.n}:')
+        logger.debug(f'{self.j_widgets}')
         for i, widget in enumerate(self.v_widgets):
             widget.entry.setValue(self.caller.v[i])
         for i in range(0, self.caller.n):
             for j in range(1, self.caller.n):
                 if i < j:
-                    print(f'i {i} j {j}')
-                    print(f'matrix {self.j_widgets}')
-                    print(f'found j_widgets[i][j]')
+                    logger.debug(f'i {i} j {j}')
+                    logger.debug(f'matrix {self.j_widgets}')
+                    logger.debug(f'found j_widgets[i][j]')
                     self.j_widgets[i][j].entry.setValue(self.caller.j[i, j])
 
     def grey(self):
