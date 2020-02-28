@@ -1,4 +1,3 @@
-from PySide2 import QtCore
 from PySide2.QtWidgets import QRadioButton
 
 from qt_nmr.view.mainwindow import MainWindow

@@ -186,8 +186,6 @@ class TestApp:
             view_lineshape(view),
             load_lineshape(f'dnmr_dnmr_two_singlets.json'))
 
-
-    # @pytest.mark.skip()
     def test_all_nspin(self, qtbot, caplog):
         # currently not working. For some reason, qtbot clicking the nspin
         # buttons isn't working.
@@ -237,7 +235,6 @@ class TestApp:
         # np.testing.assert_array_almost_equal(view_lineshape(view),
         #                                      load_lineshape('nspin_3.json'))
 
-    # @pytest.mark.skip()
     def test_nspin_entries(self, qtbot):
         # Started to write test, but nspin button clicks not working
         # spun off as test_all_nspin to find problem.
@@ -275,7 +272,7 @@ class TestApp:
                 view_lineshape(view),
                 load_lineshape(f'nspin_3.json'))
         except ValueError as e:
-            pass  # if arrays can't be compared, they're different
+            print(e)  # if arrays can't be compared, they're different
 
         # BUT WHEN the J-value dialog is selected
         j_button = current_toolbar.j_button

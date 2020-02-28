@@ -15,37 +15,6 @@ MINIMUM = QSizePolicy.Minimum
 MAXIMUM = QSizePolicy.Maximum
 
 
-# TODO: probably remove BaseToolbar and just use MultipletBar in its place.
-# Any toolbar that can't effectively subclass/override MultipletBar should
-# be a different class altogether.
-class BaseToolbar(QWidget):
-    def __init__(self, mainwindow, model, params, *args, **kwargs):
-        super(BaseToolbar, self).__init__(*args, **kwargs)
-        self.mainwindow = mainwindow
-        self.model = model
-        self.data = params
-        logger.debug(f'toolbar model {self.model} has params {self.data}')
-
-        layout = QHBoxLayout()
-        self.setLayout(layout)
-        self._set_name()
-        # self._set_data()
-        # self._set_state()
-        self._add_widgets()
-
-    def _set_name(self):
-        raise NotImplementedError
-
-    # def _set_data(self):
-    #     raise NotImplementedError
-
-    def _add_widgets(self):
-        raise NotImplementedError
-
-    # def reset(self, setting):
-    #     raise NotImplementedError
-
-
 class MultipletBar(QWidget):
     def __init__(self, mainwindow, model, params, *args, **kwargs):
         super(MultipletBar, self).__init__(*args, **kwargs)
@@ -108,20 +77,27 @@ class FirstOrderBar(MultipletBar):
             widget.value_changed_signal.connect(self.on_value_changed)
 
 
-class SecondOrderBar(BaseToolbar):
-    def __init__(self, *args, **kwargs):
+class SecondOrderBar(QWidget):
+    def __init__(self, mainwindow, model, params, *args, **kwargs):
         super(SecondOrderBar, self).__init__(*args, **kwargs)
+        self.mainwindow = mainwindow
+        self.model = model
+        self.data = params  # necessary?
+        logger.debug(f'toolbar model {self.model} has params {self.data}')
         self.v, self.j = self.data
         self.n = len(self.v)
         assert self.n == int(self.model)
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+        self._set_name()
         self._add_nspin_widgets()
         self._add_popup()
 
     def _set_name(self):
         self.setObjectName('nuclei_bar' + str(self.model))
 
-    def _add_widgets(self):
-        pass  # must initialize widgets after super init
+    # def _add_widgets(self):
+    #     pass  # must initialize widgets after super init
 
     def _add_nspin_widgets(self):
         self._add_frequency_widgets()
@@ -278,11 +254,11 @@ class J_Popup(QDialog):
 
 
 class DNMR_Bar(MultipletBar):
-    def __int__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Currently DNMR_Bar is similar enough to MultipletBar that it can
         be a subclass.
         """
-        super(MultipletBar, self).__init__(*args, **kwargs)
+        super(DNMR_Bar, self).__init__(*args, **kwargs)
 
     def _set_name(self):
         self.setObjectName(f'{self.model}')
