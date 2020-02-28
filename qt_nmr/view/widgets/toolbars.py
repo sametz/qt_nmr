@@ -56,8 +56,8 @@ class MultipletBar(BaseToolbar):
         self.setObjectName(f'multiplet_{self.model}_toolbar')
 
     def _add_widgets(self):
-        widgets = [EntryWidget(key, val) for key, val in self.data.items()]
-        for widget in widgets:
+        self.widgets = [EntryWidget(key, val) for key, val in self.data.items()]
+        for widget in self.widgets:
             self.layout().addWidget(widget, 0)
             widget.value_changed_signal.connect(self.on_value_changed)
         self.layout().addWidget(QWidget(), 1)

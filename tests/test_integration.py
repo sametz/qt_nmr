@@ -1,13 +1,13 @@
 import logging
-import time
+# import time
 
 import numpy as np
 from PySide2 import QtCore
-import pytest
+# import pytest
 
 from qt_nmr.controller.controller import Controller
 from qt_nmr.model.model import Model
-from qt_nmr.view.widgets.entry import V_EntryWidget
+# from qt_nmr.view.widgets.entry import V_EntryWidget
 from tests.accepted_data.utils import load_lineshape
 
 # There's a lot of repetition in the test code, but trying to reduce repetition
@@ -155,7 +155,6 @@ class TestApp:
         qtbot.addWidget(view)
         buttons = view_buttons(view)
         qtbot.mouseClick(buttons['calctype']['dnmr'], QtCore.Qt.LeftButton)
-        print('\a')
         for model, button in buttons['dnmr'].items():
             # qtbot.wait(1000)
             # time.sleep(1)
@@ -167,6 +166,26 @@ class TestApp:
             view_data = view_lineshape(view)
             expected_data = load_lineshape(filename)
             np.testing.assert_array_almost_equal(view_data, expected_data)
+
+    def test_dnmr_entries(self, qtbot):
+        model, view, controller = self.mvc()
+        qtbot.addWidget(view)
+        buttons = view_buttons(view)
+        qtbot.mouseClick(buttons['calctype']['dnmr'], QtCore.Qt.LeftButton)
+        va_entry = view._ui.toolbars.currentWidget().widgets[0]
+        assert va_entry.entry.value() == 165.0
+        vb_entry = view._ui.toolbars.currentWidget().widgets[1]
+        assert vb_entry.entry.value() == 135.0
+        va_entry.entry.setValue(135.0)
+        # qtbot.wait(100)
+        assert not np.allclose(
+            view_lineshape(view),
+            load_lineshape(f'dnmr_dnmr_two_singlets.json'))
+        vb_entry.entry.setValue(165.0)
+        assert np.allclose(
+            view_lineshape(view),
+            load_lineshape(f'dnmr_dnmr_two_singlets.json'))
+
 
     # @pytest.mark.skip()
     def test_all_nspin(self, qtbot, caplog):

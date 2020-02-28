@@ -40,14 +40,6 @@ class EntryWidget(QWidget):
 
     @pyqtSlot()
     def on_entry_value_changed(self, value):
-        # print('on_entry_value_changed')
-        # print(f'name: {self.objectName()}')
-        # mydict = self.parent().data[self.parent().model_name]
-        # print(f'parent data: {self.parent().data}')
-        # print(f'my dict: {mydict}')
-        # assert self.objectName() in mydict
-        # mydict[self.objectName()] = value
-        # print('new parent data: ', self.parent().data)
         self.value_changed_signal.emit((self.objectName(), value))
 
 
