@@ -15,7 +15,9 @@ MINIMUM = QSizePolicy.Minimum
 MAXIMUM = QSizePolicy.Maximum
 
 
-# TODO: use an Abstract Base Class
+# TODO: probably remove BaseToolbar and just use MultipletBar in its place.
+# Any toolbar that can't effectively subclass/override MultipletBar should
+# be a different class altogether.
 class BaseToolbar(QWidget):
     def __init__(self, mainwindow, model, params, *args, **kwargs):
         super(BaseToolbar, self).__init__(*args, **kwargs)
@@ -32,25 +34,30 @@ class BaseToolbar(QWidget):
         self._add_widgets()
 
     def _set_name(self):
-        pass
+        raise NotImplementedError
 
-    def _set_data(self):
-        pass
-
-    # def _set_state(self):
-    #     pass
+    # def _set_data(self):
+    #     raise NotImplementedError
 
     def _add_widgets(self):
-        pass
+        raise NotImplementedError
 
-    def reset(self, setting):
-        pass
+    # def reset(self, setting):
+    #     raise NotImplementedError
 
 
-class MultipletBar(BaseToolbar):
-    def __init__(self, *args, **kwargs):
+class MultipletBar(QWidget):
+    def __init__(self, mainwindow, model, params, *args, **kwargs):
         super(MultipletBar, self).__init__(*args, **kwargs)
-        logger.debug(f'{self.objectName()} has data {self.data}')
+        self.mainwindow = mainwindow
+        self.model = model
+        self.data = params
+        logger.debug(f'toolbar model {self.model} has params {self.data}')
+
+        layout = QHBoxLayout()
+        self.setLayout(layout)
+        self._set_name()
+        self._add_widgets()
 
     def _set_name(self):
         self.setObjectName(f'multiplet_{self.model}_toolbar')
@@ -78,9 +85,9 @@ class MultipletBar(BaseToolbar):
     def request_update(self):
         self.mainwindow.request_update('multiplet', self.model)
 
-    @pyqtSlot(dict)
-    def update(self):
-        pass
+    # @pyqtSlot(dict)
+    # def update(self):
+    #     pass
 
 
 class FirstOrderBar(MultipletBar):
@@ -183,10 +190,10 @@ class SecondOrderBar(BaseToolbar):
     def request_update(self):
         self.mainwindow.request_update('nspin', self.n)
 
-    def reset(self):
-        for i, widget in enumerate(self.v_widgets):
-            self.v[i] = widget.value()
-        self.request_update()
+    # def reset(self):
+    #     for i, widget in enumerate(self.v_widgets):
+    #         self.v[i] = widget.value()
+    #     self.request_update()
 
 
 class J_Popup(QDialog):
