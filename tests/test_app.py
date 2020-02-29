@@ -1,14 +1,11 @@
-import sys
-
 import numpy as np
 
 from qt_nmr.app import App
 from tests.accepted_data.utils import load_lineshape
 
 
-def test_App():
+def test_app():
     app = App([])
-    # qtbot.addWidget(app)
     abc_button = app.main_view._ui.calctype.abc_button
     abc_button.animateClick(msec=0)
     dataitem = app.main_view._ui.plot.listDataItems()[0]

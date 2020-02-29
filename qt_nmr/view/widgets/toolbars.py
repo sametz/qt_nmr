@@ -68,10 +68,8 @@ class FirstOrderBar(MultipletBar):
         for key, val in self.data.items():
             if '#' in key:
                 widgets.append(EntryWidget(key, val, entry=QSpinBox))
-                assert widgets[-1].entry_type is int
             else:
                 widgets.append(EntryWidget(key, val))
-                assert widgets[-1].entry_type is float
         for widget in widgets:
             self.layout().addWidget(widget)
             widget.value_changed_signal.connect(self.on_value_changed)
@@ -242,10 +240,12 @@ class J_Popup(QDialog):
                     logger.debug(f'found j_widgets[i][j]')
                     self.j_widgets[i][j].entry.setValue(self.caller.j[i, j])
 
-    def grey(self):
+    @staticmethod
+    def grey():
         return Color('lightGray')
 
-    def add_background(self, widget, color='lightGray'):
+    @staticmethod
+    def add_background(widget, color='lightGray'):
         backing = Color(color)
         layout = QVBoxLayout()
         layout.addWidget(widget)
