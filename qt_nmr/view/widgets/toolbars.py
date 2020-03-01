@@ -1,11 +1,11 @@
 import logging
 
+from PySide2.QtCore import Qt
+from PySide2.QtCore import Slot as pyqtSlot
+from PySide2.QtGui import QColor, QPalette
 from PySide2.QtWidgets import (QWidget, QHBoxLayout, QStackedWidget, QSpinBox,
                                QPushButton, QDialog, QGridLayout, QLabel,
                                QVBoxLayout, QSizePolicy)
-from PySide2.QtCore import Slot as pyqtSlot
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QColor, QPalette
 from qt_nmr.view.widgets.entry import (EntryWidget, V_EntryWidget,
                                        J_EntryWidget, Color)
 

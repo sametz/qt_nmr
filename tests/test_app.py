@@ -1,9 +1,11 @@
 import numpy as np
+import pytest
 
 from qt_nmr.app import App
 from tests.accepted_data.utils import load_lineshape
 
 
+# @pytest.mark.skip()
 def test_app():
     app = App([])
     abc_button = app.main_view._ui.calctype.abc_button
