@@ -17,7 +17,7 @@ class App(QApplication):
         self.main_view.show()
 
 
-if __name__ == '__main__':
+def main():
     import logging
     logging.basicConfig(level=logging.INFO,
                         format=' %(asctime)s - %(name)s - %(levelname)s - %(message)s')

@@ -29,3 +29,9 @@ Run the tests:
 .. code-block:: bash
 
    pytest
+
+Run the application:
+
+.. code-block:: bash
+
+   python -m qt_nmr
