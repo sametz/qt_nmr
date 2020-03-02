@@ -4,17 +4,17 @@ requires = ["briefcase"]
 [tool.briefcase]
 project_name = "qt-dnmr"
 bundle = "com.example"
-version = "0.0.1"
+version = "0.1.0"
 url = "https://github.com/sametz/qt_nmr"
 license = "MIT license"
 author = 'Geoffrey Sametz'
 author_email = "sametz@udel.edu"
 
-[tool.briefcase.app.uwdnmr]
+[tool.briefcase.app.qt_nmr]
 formal_name = "qt-dnmr"
 description = "Simulation of First-Order, Second-Order, and Dynamic NMR spectra"
-icon = "src/uwdnmr/resources/uwdnmr"
-sources = ['src/uwdnmr']
+icon = "src/qt_nmr/resources/qt_nmr"
+sources = ['src/qt_nmr']
 requires = [
     'pyside2==5.13.0',
     'pyqtgraph>=0.11.0rc0',
@@ -22,18 +22,18 @@ requires = [
 ]
 
 
-[tool.briefcase.app.uwdnmr.macOS]
+[tool.briefcase.app.qt_nmr.macOS]
 requires = []
 
-[tool.briefcase.app.uwdnmr.linux]
+[tool.briefcase.app.qt_nmr.linux]
 requires = []
 
-[tool.briefcase.app.uwdnmr.windows]
+[tool.briefcase.app.qt_nmr.windows]
 requires = []
 
 # Mobile deployments
-[tool.briefcase.app.uwdnmr.iOS]
+[tool.briefcase.app.qt_nmr.iOS]
 requires = []
 
-[tool.briefcase.app.uwdnmr.android]
+[tool.briefcase.app.qt_nmr.android]
 requires = []
