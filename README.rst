@@ -1,3 +1,5 @@
+.. image:: screenshot.png
+
 Spiking a refactoring of
 `uw-dnmr <https://github.com/sametz/uw_dnmr>`_
 as a PySides2 Qt app.
