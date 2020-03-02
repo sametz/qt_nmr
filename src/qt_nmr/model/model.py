@@ -36,7 +36,7 @@ class Model(QObject):
         max_ = peaklist[-1][0]
         lin_min, lin_max = min_ - margin, max_ + margin
         window = lin_max - lin_min  # Hz
-        datapoints = round(window / resolution)
+        datapoints = int(round(window / resolution))
         logger.debug(f'making linspace for {min_} {max_} {resolution}')
         return np.linspace(lin_min, lin_max, datapoints)
 
