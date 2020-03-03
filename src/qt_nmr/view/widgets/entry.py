@@ -36,7 +36,6 @@ class EntryWidget(QWidget):
         self.setSizePolicy(MAXIMUM, MAXIMUM)
 
         self.entry.valueChanged.connect(self.on_entry_value_changed)
-        # print('entry parent is: ', self.entry.parent(), self.entry.parentWidget())
 
     @pyqtSlot()
     def on_entry_value_changed(self, value):
@@ -51,7 +50,6 @@ class V_EntryWidget(EntryWidget):
 
     @pyqtSlot()
     def on_entry_value_changed(self, value):
-        # print(f'about to emit {self.index, self.entry.value()}')
         self.value_changed_signal.emit((self.index, self.entry.value()))
 
 
